@@ -1,0 +1,8 @@
+<section class="row">
+  <h2>Weather</h2>
+
+</section>
+
+ <%= live_component @socket,
+      WeatherWeb.WeatherStationLiveComponent,
+      station: "Deerfield, IL, US" %>
