@@ -1,7 +1,9 @@
 defmodule Weather.WeatherStationInfo do
 
   def format_weather_info_url(station) do
-    "https://api.openweathermap.org/data/2.5/weather?appid=7ad3656d8650368a5116994d7b9a5610&units=imperial&q=" <> station
+    "https://api.openweathermap.org/data/2.5/weather?" <>
+      "appid=#{Application.fetch_env!(:weather, :weather_service_api_key)}" <>
+      "&units=imperial&q=#{station}"
   end
 
   def call_weather_info_webservice(station) do
@@ -21,7 +23,7 @@ defmodule Weather.WeatherStationInfo do
 	 {:ok, body} <- extract_weather_info_from_response(resp) do
       body
     else
-      %{status_code: 404} -> %{error_message: "Could not find weather station."}
+      %{status_code: 404} -> %{error_message: "Could not find weather station: #{station}."}
       _error -> %{error_message: "Something went wrong!"}
     end
   end

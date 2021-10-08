@@ -1,8 +1,26 @@
 <section class="row">
   <h2>Weather</h2>
-
 </section>
 
- <%= live_component @socket,
-      WeatherWeb.WeatherStationLiveComponent,
-      station: "Deerfield, IL, US" %>
+<section class="row">
+  <p>Enter a station to add to the list.</p>
+  <form phx-submit="add_station">
+   <%= text_input :station, :station_id %>
+  </form>
+  
+</section>
+
+<%= for station <- @stations do %>
+    <section class="row">
+     <%= live_component @socket,
+	 WeatherWeb.WeatherStationLiveComponent,
+	 id: station,
+	 station: station %>
+     <%= link "Remove", to: "#", "phx-click": "clear_station",
+	 "phx-value-station-id": station %>
+    </section>
+
+<% end %>
+   
+
+
