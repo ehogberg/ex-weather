@@ -20,17 +20,19 @@ defmodule WeatherWeb.WeatherLive do
   
   def assign_default_stations(socket) do
     socket
-    |> assign(:stations, MapSet.new(["Chicago","Boston"]))
+    |> assign(:stations, ["Chicago","Boston"])
   end
-
+  
   def assign_new_station(socket,new_station) do
-    socket
-    |> assign(:stations, MapSet.put(socket.assigns.stations,new_station))
+    if new_station in socket.assigns.stations do
+      socket
+    else
+      assign(socket, :stations, socket.assigns.stations ++ [new_station])
+    end
   end
 
   def clear_station(socket,station_id) do
     socket
-    |> assign(:stations, MapSet.delete(socket.assigns.stations, station_id))
+    |> assign(:stations, List.delete(socket.assigns.stations, station_id))
   end
-  
 end

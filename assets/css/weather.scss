@@ -1,0 +1,24 @@
+.station-info-row {
+    border: 1px solid grey;
+    margin-bottom: 1em;
+    padding: .25em;
+    animation-name: yellowfade;
+    animation-duration: 1.5s;
+}
+
+@keyframes yellowfade {
+    from { background: yellow; }
+    to { background: transparent; }
+}
+
+.weather-station-live {
+    .summary {
+	.conditions {
+	    vertical-align: middle;
+	}
+    }
+    .temp {
+	font-size: smaller;
+    }
+    
+}

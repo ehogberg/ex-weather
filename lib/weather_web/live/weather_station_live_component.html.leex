@@ -1,18 +1,19 @@
-<div class="weather-station-live">
-  <h3><%= @station_data.name %></h3>
-  
-  <div class="summary">
-    <%= img_tag "http://openweathermap.org/img/wn/" <>
-	"#{get_in(@station_data.weather, [Access.at(0), :icon])}@2x.png" %>
-    <br>
-    <i><%= get_in(@station_data.weather, [Access.at(0), :description]) %></i>
+<div class="weather-station-live row">
+  <div class="summary column">
+    <h4><%= @station_data.name %></h4>
+    <p>
+      <%= img_tag "http://openweathermap.org/img/wn/" <>
+	  "#{get_in(@station_data.weather, [Access.at(0), :icon])}.png",
+	  class: "weather-icon"%>
+      <i class="conditions"><%= get_in(@station_data.weather, [Access.at(0), :description]) %></i>
+    </p>
   </div>
   
-  <div class="temp">
-    Current temperature: <%= @station_data.main.temp %>F<br>
-    Feels like: <%= @station_data.main.feels_like %>F<br>
-    Today's high: <%= @station_data.main.temp_max %>F<br>
-    Today's low: <%= @station_data.main.temp_min %>F<br>
+  <div class="temp column">
+    Current temperature: <%=trunc(@station_data.main.temp) %>&deg; F<br>
+    Feels like: <%= trunc(@station_data.main.feels_like) %>&deg; F<br>
+    Today's high: <%= trunc(@station_data.main.temp_max) %>&deg; F<br>
+    Today's low: <%= trunc(@station_data.main.temp_min) %>&deg; F<br>
     Rel. humidity: <%= @station_data.main.humidity %>%<br>
   </div>
 </div>
