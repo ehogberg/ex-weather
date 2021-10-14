@@ -1,12 +1,13 @@
 <div class="weather-station-live row">
-  <div class="summary column">
+  <div class="summary column column-20">
     <h4><%= @station_data.name %></h4>
-    <p>
+    <div>
       <%= img_tag "http://openweathermap.org/img/wn/" <>
 	  "#{get_in(@station_data.weather, [Access.at(0), :icon])}.png",
 	  class: "weather-icon"%>
+      <br/>
       <i class="conditions"><%= get_in(@station_data.weather, [Access.at(0), :description]) %></i>
-    </p>
+    </div>
   </div>
   
   <div class="temp column">

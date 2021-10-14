@@ -3,10 +3,13 @@
 </section>
 
 <section class="row">
-  <p>Enter a station to add to the list.</p>
-  <form phx-submit="add_station">
-   <%= text_input :station, :station_id %>
-  </form>
+  <span class="column column-33">Enter a station to add to the list:</span>
+  <span class="column column-67">
+    <form phx-submit="add_station">
+      <%= text_input :station, :station_id, value: ""%>
+    </form>
+  </span>
+  
   
 </section>
 
