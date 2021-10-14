@@ -39,3 +39,6 @@ config :weather, WeatherWeb.Endpoint,
 #
 # Then you can assemble a release by calling `mix release`.
 # See `mix help release` for more information.
+
+# Weather service API key
+config :weather, weather_service_api_key: "${WEATHER_SERVICE_API_KEY}"
