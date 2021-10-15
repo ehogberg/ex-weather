@@ -19,6 +19,8 @@ defmodule Weather.WeatherStationInfo do
   end
   
   def get_weather_station_info(station) do
+    IO.puts "Retrieving weather station info for station: #{station}"
+    
     with %{status_code: 200} = resp <- call_weather_info_webservice(station),
 	 {:ok, body} <- extract_weather_info_from_response(resp) do
       body

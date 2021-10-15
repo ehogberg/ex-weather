@@ -2,7 +2,7 @@ defmodule WeatherWeb.WeatherStationLiveComponent do
   use WeatherWeb, :live_component
 
   alias Weather.WeatherStationInfo
-  
+
   @impl true
   def update(%{station: station} = assigns, socket) do
     {:ok,

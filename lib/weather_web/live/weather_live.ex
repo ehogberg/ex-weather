@@ -3,9 +3,29 @@ defmodule WeatherWeb.WeatherLive do
 
   @impl true
   def mount(_params, _sess, socket) do
+    if connected?(socket), do: Process.send_after(self(),:check_update,1000)
+    
     {:ok,
      socket
-     |> assign_default_stations()}
+     |> assign_default_stations()
+     |> assign_next_update()}
+  end
+
+  @impl true
+  def handle_info(:check_update,socket) do
+    Process.send_after(self(), :check_update, 1000)
+
+    if (DateTime.diff(socket.assigns.next_update,DateTime.utc_now) <= 0) do
+      for station <- socket.assigns.stations do
+	send_update(WeatherWeb.WeatherStationLiveComponent, id: station, station: station)
+      end
+      
+      {:noreply, socket |> assign_next_update()}
+    else
+	{:noreply,
+	 socket
+	 |> assign_countdown_timer(socket.assigns.next_update)}
+    end
   end
 
   @impl true
@@ -20,7 +40,7 @@ defmodule WeatherWeb.WeatherLive do
   
   def assign_default_stations(socket) do
     socket
-    |> assign(:stations, ["Chicago","Boston"])
+    |> assign(:stations, ["Chicago", "London", "Prague"])
   end
   
   def assign_new_station(socket,new_station) do
@@ -31,8 +51,43 @@ defmodule WeatherWeb.WeatherLive do
     end
   end
 
+  def assign_countdown_timer(socket, next_update) do
+    assign(socket, :countdown_timer, calc_countdown_timer(next_update))
+  end
+        
+  def assign_next_update(socket) do
+    next_update = DateTime.utc_now
+    |> DateTime.add(600,:second)
+
+    socket
+    |> assign(:last_updated_at, DateTime.utc_now)
+    |> assign(:next_update,next_update)
+    |> assign_countdown_timer(next_update)
+  end
+  
   def clear_station(socket,station_id) do
     socket
     |> assign(:stations, List.delete(socket.assigns.stations, station_id))
   end
+
+  def calc_countdown_timer(next_update_time) do
+    seconds_diff = DateTime.diff(next_update_time, DateTime.utc_now)
+    minutes_until = div(seconds_diff,60)
+    seconds_until = Integer.mod(seconds_diff,60)
+    {minutes_until, seconds_until}
+  end
+
+  def countdown_string({minutes_until,_}) when minutes_until > 0 do
+    "approx. #{pluralize(minutes_until,'minute','minutes')}"
+  end
+  
+  def countdown_string({_, seconds_until}) do
+    pluralize(seconds_until,"second","seconds")
+  end
+
+  def friendly_timestamp(ts), do: Calendar.strftime(ts,"%x %X")
+  
+  def pluralize(amt, singular, _plural) when amt == 1, do: "#{amt} #{singular}"
+  def pluralize(amt, _singular, plural), do: "#{amt} #{plural}"
+    
 end
