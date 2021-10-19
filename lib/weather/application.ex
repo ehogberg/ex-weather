@@ -7,11 +7,8 @@ defmodule Weather.Application do
 
   def start(_type, _args) do
     children = [
-      # Start the Ecto repository
-      Weather.Repo,
       # Start the Telemetry supervisor
       WeatherWeb.Telemetry,
-      # Start the PubSub system
       {Phoenix.PubSub, name: Weather.PubSub},
       # Start the Endpoint (http/https)
       WeatherWeb.Endpoint
