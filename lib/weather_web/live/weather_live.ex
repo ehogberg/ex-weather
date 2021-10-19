@@ -2,15 +2,23 @@ defmodule WeatherWeb.WeatherLive do
   use WeatherWeb, :live_view
 
   @impl true
-  def mount(_params, _sess, socket) do
+  def mount(params, sess, socket) do
     if connected?(socket), do: Process.send_after(self(),:check_update,1000)
+
+    station_params = params
+    |> Map.get("stations")
+    |> parse_stations()
     
     {:ok,
      socket
-     |> assign_default_stations()
+     |> assign_default_stations(station_params)
      |> assign_next_update()}
   end
 
+  def parse_stations(stations_param) when is_nil(stations_param), do: nil
+
+  def parse_stations(stations_param), do: String.split(stations_param,"|")
+  
   @impl true
   def handle_info(:check_update,socket) do
     Process.send_after(self(), :check_update, 1000)
@@ -37,11 +45,16 @@ defmodule WeatherWeb.WeatherLive do
   def handle_event("clear_station", %{"station-id" => station_id} = params, socket) do
     {:noreply, clear_station(socket, station_id)}
   end
-  
-  def assign_default_stations(socket) do
-    socket
-    |> assign(:stations, ["Chicago", "London", "Prague"])
+
+  def assign_default_stations(socket, stations) when is_nil(stations) do
+    assign_default_stations(socket, ["Chicago", "London", "Prague"])
   end
+  
+  def assign_default_stations(socket, stations) do
+    socket
+    |> assign(:stations, stations)
+  end
+  
   
   def assign_new_station(socket,new_station) do
     if new_station in socket.assigns.stations do
