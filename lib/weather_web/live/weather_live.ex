@@ -2,13 +2,13 @@ defmodule WeatherWeb.WeatherLive do
   use WeatherWeb, :live_view
 
   @impl true
-  def mount(params, sess, socket) do
+  def mount(params, _sess, socket) do
     if connected?(socket), do: Process.send_after(self(),:check_update,1000)
 
     station_params = params
     |> Map.get("stations")
     |> parse_stations()
-    
+
     {:ok,
      socket
      |> assign_default_stations(station_params)
@@ -18,7 +18,7 @@ defmodule WeatherWeb.WeatherLive do
   def parse_stations(stations_param) when is_nil(stations_param), do: nil
 
   def parse_stations(stations_param), do: String.split(stations_param,"|")
-  
+
   @impl true
   def handle_info(:check_update,socket) do
     Process.send_after(self(), :check_update, 1000)
@@ -27,7 +27,7 @@ defmodule WeatherWeb.WeatherLive do
       for station <- socket.assigns.stations do
 	send_update(WeatherWeb.WeatherStationLiveComponent, id: station, station: station)
       end
-      
+
       {:noreply, socket |> assign_next_update()}
     else
 	{:noreply,
@@ -42,20 +42,20 @@ defmodule WeatherWeb.WeatherLive do
   end
 
   @impl true
-  def handle_event("clear_station", %{"station-id" => station_id} = params, socket) do
+  def handle_event("clear_station", %{"station-id" => station_id}, socket) do
     {:noreply, clear_station(socket, station_id)}
   end
 
   def assign_default_stations(socket, stations) when is_nil(stations) do
     assign_default_stations(socket, ["Chicago", "London", "Prague"])
   end
-  
+
   def assign_default_stations(socket, stations) do
     socket
     |> assign(:stations, stations)
   end
-  
-  
+
+
   def assign_new_station(socket,new_station) do
     if new_station in socket.assigns.stations do
       socket
@@ -67,7 +67,7 @@ defmodule WeatherWeb.WeatherLive do
   def assign_countdown_timer(socket, next_update) do
     assign(socket, :countdown_timer, calc_countdown_timer(next_update))
   end
-        
+
   def assign_next_update(socket) do
     next_update = DateTime.utc_now
     |> DateTime.add(600,:second)
@@ -77,7 +77,7 @@ defmodule WeatherWeb.WeatherLive do
     |> assign(:next_update,next_update)
     |> assign_countdown_timer(next_update)
   end
-  
+
   def clear_station(socket,station_id) do
     socket
     |> assign(:stations, List.delete(socket.assigns.stations, station_id))
@@ -93,14 +93,14 @@ defmodule WeatherWeb.WeatherLive do
   def countdown_string({minutes_until,_}) when minutes_until > 0 do
     "approx. #{pluralize(minutes_until,'minute','minutes')}"
   end
-  
+
   def countdown_string({_, seconds_until}) do
     pluralize(seconds_until,"second","seconds")
   end
 
   def friendly_timestamp(ts), do: Calendar.strftime(ts,"%x %X")
-  
+
   def pluralize(amt, singular, _plural) when amt == 1, do: "#{amt} #{singular}"
   def pluralize(amt, _singular, plural), do: "#{amt} #{plural}"
-    
+
 end

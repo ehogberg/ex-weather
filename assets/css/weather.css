@@ -11,14 +11,10 @@
     to { background: transparent; }
 }
 
-.weather-station-live {
-    .summary {
-	.conditions {
-	    vertical-align: middle;
-	}
-    }
-    .temp {
-	font-size: smaller;
-    }
+.weather-station-live .summary .conditions {
+    vertical-align: middle;
+}
     
+.weather-station-live .summary .temp {
+	font-size: smaller;
 }
