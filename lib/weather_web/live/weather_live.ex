@@ -25,14 +25,13 @@ defmodule WeatherWeb.WeatherLive do
 
     if (DateTime.diff(socket.assigns.next_update,DateTime.utc_now) <= 0) do
       for station <- socket.assigns.stations do
-	send_update(WeatherWeb.WeatherStationLiveComponent, id: station, station: station)
+	      send_update(WeatherWeb.WeatherStationLiveComponent, id: station, station: station)
       end
-
       {:noreply, socket |> assign_next_update()}
     else
-	{:noreply,
-	 socket
-	 |> assign_countdown_timer(socket.assigns.next_update)}
+	    {:noreply,
+	      socket
+	      |> assign_countdown_timer(socket.assigns.next_update)}
     end
   end
 
@@ -54,7 +53,6 @@ defmodule WeatherWeb.WeatherLive do
     socket
     |> assign(:stations, stations)
   end
-
 
   def assign_new_station(socket,new_station) do
     if new_station in socket.assigns.stations do
@@ -90,17 +88,5 @@ defmodule WeatherWeb.WeatherLive do
     {minutes_until, seconds_until}
   end
 
-  def countdown_string({minutes_until,_}) when minutes_until > 0 do
-    "approx. #{pluralize(minutes_until,'minute','minutes')}"
-  end
-
-  def countdown_string({_, seconds_until}) do
-    pluralize(seconds_until,"second","seconds")
-  end
-
-  def friendly_timestamp(ts), do: Calendar.strftime(ts,"%x %X")
-
-  def pluralize(amt, singular, _plural) when amt == 1, do: "#{amt} #{singular}"
-  def pluralize(amt, _singular, plural), do: "#{amt} #{plural}"
 
 end
