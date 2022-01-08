@@ -9,8 +9,8 @@
       <%= text_input :station, :station_id, value: ""%>
     </form>
   </span>
-  
-  
+
+
 </section>
 
 <%= for station <- @stations do %>
@@ -27,8 +27,10 @@
 
 
 <section class="row">
-  Last updated at <%= friendly_timestamp(@last_updated_at) %> UTC.  Next update in <%= countdown_string(@countdown_timer)%>
+  <div class="footer column">
+    Last updated at <%= friendly_timestamp(@last_updated_at) %> UTC.  Next update in <%= countdown_string(@countdown_timer)%>
+    <br>
+    Find the sourcecode for this at <a href="https://github.com/ehogberg/ex-weather">
+    https://github.com/ehogberg/ex-weather</a>
+  </div>
 </section>
-
-
-
