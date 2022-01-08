@@ -81,12 +81,4 @@ defmodule WeatherWeb.WeatherLive do
     |> assign(:stations, List.delete(socket.assigns.stations, station_id))
   end
 
-  def calc_countdown_timer(next_update_time) do
-    seconds_diff = DateTime.diff(next_update_time, DateTime.utc_now)
-    minutes_until = div(seconds_diff,60)
-    seconds_until = Integer.mod(seconds_diff,60)
-    {minutes_until, seconds_until}
-  end
-
-
 end
