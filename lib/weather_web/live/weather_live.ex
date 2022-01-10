@@ -7,6 +7,9 @@ defmodule WeatherWeb.WeatherLive do
   use WeatherWeb, :live_view
 
   @doc """
+  Initializes the component state by creating a default set of WeatherStationLiveComponent's
+  and sets up a component data refresh frequency (by default, every 10 minutes.)
+
   The default initial set of weather stations can be overriden at mount time by passing a `"stations"`
   value in the params.   The stations var should be a pipe-delimited list of weather station identifiers
   to use as the new initial set for this component instance.  Example:
