@@ -1,0 +1,93 @@
+defmodule WeatherWeb.WeatherLiveTests do
+  use ExUnit.Case
+  alias WeatherWeb.WeatherLive
+
+  defp create_empty_socket() do
+    [socket: %Phoenix.LiveView.Socket{}]
+  end
+
+  defp create_mounted_socket() do
+    {:ok, mounted_socket} = WeatherLive.mount(%{}, nil, %Phoenix.LiveView.Socket{})
+    [mounted_socket: mounted_socket]
+  end
+
+  defp clear_multiple_stations(socket, station_list) do
+    Enum.reduce(station_list, socket, fn el, socket ->
+      elem(
+        WeatherLive.handle_event(
+          "clear_station",
+          %{"station-id" => el},
+          socket
+        ),
+        1
+      )
+    end)
+  end
+
+  describe "Initial socket state" do
+    setup do
+      create_empty_socket()
+    end
+
+    test "when no weather stations are provided", %{socket: socket} do
+      {:ok, socket} = WeatherLive.mount(%{}, nil, socket)
+      assert socket.assigns.stations == ["Chicago", "London", "Prague"]
+    end
+
+    test "when stations are provided", %{socket: socket} do
+      params = %{"stations" => "Peoria|Louisville"}
+      {:ok, socket} = WeatherLive.mount(params, nil, socket)
+      assert socket.assigns.stations == ["Peoria", "Louisville"]
+    end
+
+    test "callback time set appropriately in the future", %{socket: socket} do
+      ten_minutes_hence = DateTime.utc_now() |> DateTime.add(600)
+      {:ok, socket} = WeatherLive.mount(%{}, nil, socket)
+      assert DateTime.diff(socket.assigns.next_update, ten_minutes_hence) < 1
+    end
+  end
+
+  describe "Add and clear weather stations" do
+    setup do
+      create_mounted_socket()
+    end
+
+    test "adding an additional station", %{mounted_socket: mounted_socket} do
+      {:noreply, socket} =
+        WeatherLive.handle_event(
+          "add_station",
+          %{"station" => %{"station_id" => "Springfield"}},
+          mounted_socket
+        )
+
+      assert socket.assigns.stations == ["Chicago", "London", "Prague", "Springfield"]
+    end
+
+    test "duplicate station addition requests are ignored", %{mounted_socket: mounted_socket} do
+      {:noreply, socket} =
+        WeatherLive.handle_event(
+          "add_station",
+          %{"station" => %{"station_id" => "Prague"}},
+          mounted_socket
+        )
+
+      assert socket.assigns.stations == ["Chicago", "London", "Prague"]
+    end
+
+    test "clearing a station", %{mounted_socket: mounted_socket} do
+      {:noreply, socket} =
+        WeatherLive.handle_event(
+          "clear_station",
+          %{"station-id" => "London"},
+          mounted_socket
+        )
+
+      assert socket.assigns.stations == ["Chicago", "Prague"]
+    end
+
+    test "can't clear the last station in the set", %{mounted_socket: mounted_socket} do
+      socket = clear_multiple_stations(mounted_socket, ["Chicago", "London", "Prague"])
+      assert socket.assigns.stations == ["Prague"]
+    end
+  end
+end

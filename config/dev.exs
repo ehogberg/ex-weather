@@ -21,7 +21,7 @@ config :weather, WeatherWeb.Endpoint,
   code_reloader: true,
   check_origin: false,
   watchers: [
-   esbuild: {Esbuild, :install_and_run, [:default, ~w(--sourcemap=inline --watch)]}
+    esbuild: {Esbuild, :install_and_run, [:default, ~w(--sourcemap=inline --watch)]}
   ]
 
 # ## SSL Support
@@ -70,4 +70,4 @@ config :phoenix, :stacktrace_depth, 20
 config :phoenix, :plug_init_mode, :runtime
 
 # add secrets
-import_config "dev.secret.exs"
+import_config "openweather.secret.exs"

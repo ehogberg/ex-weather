@@ -1,4 +1,4 @@
-use Mix.Config
+import Config
 
 # For production, don't forget to configure the url host
 # to something meaningful, Phoenix uses this information
@@ -16,7 +16,7 @@ config :weather, WeatherWeb.Endpoint,
   secret_key_base: "${SECRET_KEY_BASE}",
   url: [host: "${APP_NAME}.gigalixirapp.com", port: 443],
   cache_static_manifest: "priv/static/cache_manifest.json",
-  version: Mix.Project.config[:version]
+  version: Mix.Project.config()[:version]
 
 config :weather, Weather.Repo,
   adapater: Ecto.Adapters.Postgres,
