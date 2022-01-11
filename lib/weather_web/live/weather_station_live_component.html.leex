@@ -1,7 +1,7 @@
 <div class="weather-station-live row">
     <%= if Map.has_key?(@station_data,:name) do %>
-      <div class="summary column column-20">
-        <h4><%= @station_data.name %></h4>
+      <div class="summary column column-40">
+        <h4 class="station-name"><%= @station_data.name %></h4>
         <div>
           <%= img_tag "http://openweathermap.org/img/wn/" <>
             "#{get_in(@station_data.weather, [Access.at(0), :icon])}.png",
@@ -11,7 +11,7 @@
         </div>
       </div>
       <div class="temp column">
-          Current temperature: <%=trunc(@station_data.main.temp) %>&deg; F<br>
+          Curr. temperature: <%=trunc(@station_data.main.temp) %>&deg; F<br>
           Feels like: <%= trunc(@station_data.main.feels_like) %>&deg; F<br>
           Today's high: <%= trunc(@station_data.main.temp_max) %>&deg; F<br>
           Today's low: <%= trunc(@station_data.main.temp_min) %>&deg; F<br>

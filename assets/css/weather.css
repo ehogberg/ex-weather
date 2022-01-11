@@ -12,14 +12,28 @@
     to { background: transparent; }
 }
 
+.weather-station-live {
+    width: 95%;
+}
+
 .weather-station-live .summary .conditions {
     vertical-align: middle;
 }
-    
-.weather-station-live .summary .temp {
+
+.weather-station-live .temp {
 	font-size: smaller;
+}
+
+.dismissal {
+    float: right;
 }
 
 .footer {
     text-align: center;
+    font-size: smaller;
+    margin-top: 1em;
+}
+
+.station-name {
+    font-weight: bold;
 }

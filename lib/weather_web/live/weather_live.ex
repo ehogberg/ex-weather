@@ -49,7 +49,7 @@ defmodule WeatherWeb.WeatherLive do
 
   @impl true
   def handle_event("add_station", %{"station" => %{"station_id" => station_id}}, socket),
-    do: {:noreply, assign_new_station(socket, station_id)}
+    do: {:noreply, assign_new_station(socket, normalize_string(station_id))}
 
   @impl true
   def handle_event("clear_station", %{"station-id" => station_id}, socket),
@@ -65,6 +65,7 @@ defmodule WeatherWeb.WeatherLive do
 
   defp assign_default_stations(socket, stations), do: assign(socket, :stations, stations)
 
+  defp assign_new_station(socket,new_station) when new_station == "", do: socket
   defp assign_new_station(socket, new_station) do
     if new_station in socket.assigns.stations do
       socket

@@ -3,32 +3,38 @@
 </section>
 
 <section class="row">
-  <span class="column column-33">Enter a station to add to the list:</span>
-  <span class="column column-67">
-    <form phx-submit="add_station">
-      <%= text_input :station, :station_id, value: ""%>
+  <span class="column column-25">Enter a station to add:</span>
+  <span class="column column-60">
+    <form id="add_station_frm" phx-submit="add_station">
+      <%= text_input :station, :station_id, value: "",
+        class: "add-station-field" %>
     </form>
   </span>
-
-
+  <span class="column column-5">
+    <button type="submit" form="add_station_frm">Add</button>
+  </span>
 </section>
 
-<%= for station <- @stations do %>
-    <section class="station-info-row row">
-     <%= live_component @socket,
-	 WeatherWeb.WeatherStationLiveComponent,
-	 id: station,
-	 station: station %>
-     <%= link "Remove", to: "#", "phx-click": "clear_station",
-	 "phx-value-station-id": station %>
-    </section>
-
+<%= for station_sets <- Enum.chunk_every(@stations,2) do %>
+  <div class="row">
+    <%= for station <- station_sets do %>
+      <div class="station-info-row column column-50">
+        <%= link "[-]", to: "#", "phx-click": "clear_station", class: "dismissal",
+            "phx-value-station-id": station %>
+        <%= live_component @socket,
+            WeatherWeb.WeatherStationLiveComponent,
+            id: station,
+            station: station %>
+      </div>
+    <% end %>
+  </div>
 <% end %>
-
 
 <section class="row">
   <div class="footer column">
     Last updated at <%= friendly_timestamp(@last_updated_at) %> UTC.  Next update in <%= countdown_string(@countdown_timer)%>
+    <br>
+    Weather data from Open Weather Map: <a href='https://openweathermap.org'>https://openweathermap.org</a>
     <br>
     Find the sourcecode for this at <a href="https://github.com/ehogberg/ex-weather">
     https://github.com/ehogberg/ex-weather</a>

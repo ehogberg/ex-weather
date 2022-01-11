@@ -7,6 +7,8 @@ defmodule WeatherWeb.Helpers do
     pluralize(seconds_until, "second", "seconds")
   end
 
+  def normalize_string(str), do: str |> to_string() |> String.trim()
+
   def friendly_timestamp(ts), do: Calendar.strftime(ts, "%x %X")
 
   def pluralize(amt, singular, _plural) when amt == 1, do: "#{amt} #{singular}"

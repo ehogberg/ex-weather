@@ -74,6 +74,33 @@ defmodule WeatherWeb.WeatherLiveTests do
       assert socket.assigns.stations == ["Chicago", "London", "Prague"]
     end
 
+    test "adding an empty (nil or blank) station specifier is ignored",
+      %{mounted_socket: mounted_socket} do
+      {:noreply, socket} =
+        WeatherLive.handle_event(
+          "add_station",
+          %{"station" => %{"station_id" => "   "}},
+          mounted_socket
+        )
+      assert length(socket.assigns.stations) == 3
+
+      {:noreply, socket} =
+        WeatherLive.handle_event(
+          "add_station",
+          %{"station" => %{"station_id" => ""}},
+          mounted_socket
+        )
+      assert length(socket.assigns.stations) == 3
+
+      {:noreply, socket} =
+        WeatherLive.handle_event(
+          "add_station",
+          %{"station" => %{"station_id" => nil}},
+          mounted_socket
+        )
+      assert length(socket.assigns.stations) == 3
+    end
+
     test "clearing a station", %{mounted_socket: mounted_socket} do
       {:noreply, socket} =
         WeatherLive.handle_event(
