@@ -16,8 +16,13 @@
     width: 95%;
 }
 
+.weather-station-live .summary .station-name {
+    font-weight: bold;
+}
+
 .weather-station-live .summary .conditions {
     vertical-align: middle;
+    font-size: smaller;
 }
 
 .weather-station-live .temp {
@@ -34,6 +39,4 @@
     margin-top: 1em;
 }
 
-.station-name {
-    font-weight: bold;
-}
+
