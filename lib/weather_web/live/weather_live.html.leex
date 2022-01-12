@@ -11,7 +11,7 @@
     </form>
   </span>
   <span class="column column-5">
-    <button type="submit" form="add_station_frm">Add</button>
+    <button type="submit" form="add_station_frm"><i class="far fa-plus fa-lg"></i></button>
   </span>
 </section>
 
@@ -19,7 +19,7 @@
   <div class="row">
     <%= for station <- station_sets do %>
       <div class="station-info-row column column-50">
-        <%= link "[-]", to: "#", "phx-click": "clear_station", class: "dismissal",
+        <%= link "", to: "#", "phx-click": "clear_station", class: "dismissal far fa-times",
             "phx-value-station-id": station %>
         <%= live_component @socket,
             WeatherWeb.WeatherStationLiveComponent,

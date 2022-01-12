@@ -62,7 +62,6 @@ defmodule WeatherWeb.WeatherLive do
 
   defp assign_default_stations(socket, stations) when length(stations) == 0,
     do: assign_default_stations(socket, ["Chicago", "London", "Prague"])
-
   defp assign_default_stations(socket, stations), do: assign(socket, :stations, stations)
 
   defp assign_new_station(socket,new_station) when new_station == "", do: socket
