@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-full">
   <head>
 
     <meta charset="utf-8"/>
@@ -7,11 +7,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <%= csrf_meta_tag() %>
     <%= live_title_tag assigns[:page_title] || "Phoenix LiveView Weather Example"%>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito&display=swap" rel="stylesheet">
     <link phx-track-static rel="stylesheet" href="<%= Routes.static_path(@conn, "/assets/app.css") %>"/>
     <script defer phx-track-static type="text/javascript" src="<%= Routes.static_path(@conn, "/assets/app.js") %>"></script>
     <script src="https://kit.fontawesome.com/2cbd3fac6d.js" crossorigin="anonymous"></script>
   </head>
-  <body>
+  <body class="pt-4 flex flex-col h-full font-sans font-normal font-base text-gray-800">
     <%= @inner_content %>
   </body>
 </html>

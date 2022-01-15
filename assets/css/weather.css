@@ -1,43 +1,11 @@
-.station-info-row {
-    border: 1px solid grey;
-    margin-bottom: 1em;
-    padding: .25em;
+.station-info {
     animation-name: yellowfade;
     animation-duration: 1.5s;
 }
 
-
 @keyframes yellowfade {
     from { background: yellow; }
     to { background: transparent; }
-}
-
-.weather-station-live {
-    width: 95%;
-}
-
-.weather-station-live .summary .station-name {
-    font-weight: bold;
-}
-
-.weather-station-live .summary .conditions {
-    vertical-align: middle;
-    font-size: smaller;
-}
-
-.weather-station-live .temp {
-	font-size: smaller;
-}
-
-.dismissal {
-    float: right;
-    margin-top: .25em;
-}
-
-.footer {
-    text-align: center;
-    font-size: smaller;
-    margin-top: 1em;
 }
 
 

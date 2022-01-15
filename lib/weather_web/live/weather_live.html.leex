@@ -1,42 +1,58 @@
-<section class="row">
-  <h2>Phoenix LiveView Weather</h2>
-</section>
+<div class="flex flex-col">
 
-<section class="row">
-  <span class="column column-25">Enter a station to add:</span>
-  <span class="column column-60">
-    <form id="add_station_frm" phx-submit="add_station">
-      <%= text_input :station, :station_id, value: "",
-        class: "add-station-field" %>
-    </form>
-  </span>
-  <span class="column column-5">
-    <button type="submit" form="add_station_frm"><i class="far fa-plus fa-lg"></i></button>
-  </span>
-</section>
+  <div class="flex-grow text-center font-bold text-2xl mb-4">
+    Phoenix LiveView Weather
+  </div>
 
-<%= for station_sets <- Enum.chunk_every(@stations,2) do %>
-  <div class="row">
-    <%= for station <- station_sets do %>
-      <div class="station-info-row column column-50">
-        <%= link "", to: "#", "phx-click": "clear_station", class: "dismissal far fa-times",
-            "phx-value-station-id": station %>
-        <%= live_component @socket,
-            WeatherWeb.WeatherStationLiveComponent,
-            id: station,
-            station: station %>
+  <div class="flex flex-row mb-4">
+    <span class="w-3/12">Enter a station to add:</span>
+    <span class="w-9/12">
+      <form id="add_station_frm" phx-submit="add_station">
+        <%= text_input :station, :station_id, value: "",
+          class: "rounded w-full placeholder-grey-500",
+          placeholder: "enter a weather station specifier string" %>
+      </form>
+    </span>
+    <span class="ml-3">
+      <button class="border" type="submit" form="add_station_frm">
+        <i class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded far fa-plus fa-lg"></i>
+      </button>
+    </span>
+  </div>
+
+
+  <div class="flex flex-row flex-wrap mb-4">
+    <%= for station <- @stations do %>
+      <div class="w-1/2 p-2 mb-1px mr-1px border border-slate-400">
+        <div class="flex flex-row ">
+          <div class="w-full">
+            <%= live_component @socket,
+                WeatherWeb.WeatherStationLiveComponent,
+                id: station,
+                station: station %>
+          </div>
+
+          <%= link to: "#", "phx-click": "clear_station",
+            class: "dismissal",
+            "phx-value-station-id": station do %>
+            <i class="text-red-700 fas fa-window-close"></i>
+          <% end %>
+        </div>
       </div>
     <% end %>
   </div>
-<% end %>
 
-<section class="row">
-  <div class="footer column">
+
+  <div class="flex-grow text-center text-sm italic">
     Last updated at <%= friendly_timestamp(@last_updated_at) %> UTC.  Next update in <%= countdown_string(@countdown_timer)%>
     <br>
-    Weather data from Open Weather Map: <a href='https://openweathermap.org'>https://openweathermap.org</a>
+    Weather data from Open Weather Map:
+      <a href='https://openweathermap.org'
+         class="hover:text-blue-500">https://openweathermap.org</a>
     <br>
-    Find the sourcecode for this at <a href="https://github.com/ehogberg/ex-weather">
-    https://github.com/ehogberg/ex-weather</a>
+    Find the sourcecode for this at
+      <a href="https://github.com/ehogberg/ex-weather"
+         class="hover:text-blue-500">https://github.com/ehogberg/ex-weather</a>
   </div>
-</section>
+
+</div>

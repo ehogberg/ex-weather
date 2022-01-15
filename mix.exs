@@ -46,7 +46,8 @@ defmodule Weather.MixProject do
       {:httpoison, "~> 1.8"},
       {:distillery, "~> 2.1"},
       {:plug_cowboy, "~> 2.0"},
-      {:esbuild, "~> 0.2", runtime: Mix.env() == :dev}
+      {:esbuild, "~> 0.2", runtime: Mix.env() == :dev},
+      {:tailwind, "~> 0.1", runtime: Mix.env() == :dev}
     ]
   end
 
@@ -60,7 +61,7 @@ defmodule Weather.MixProject do
     [
       setup: ["deps.get"],
       format: ["format mix.exs lib/**/*.{ex,exs} test/**/*.{ex,exs}"],
-      "assets.deploy": ["esbuild default --minify", "phx.digest"]
+      "assets.deploy": ["tailwind default --minify","esbuild default --minify", "phx.digest"]
     ]
   end
 end
