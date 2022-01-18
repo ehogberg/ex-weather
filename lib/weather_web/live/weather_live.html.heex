@@ -26,10 +26,8 @@
       <div class="w-1/2 p-2 mb-1px mr-1px border border-slate-400">
         <div class="flex flex-row ">
           <div class="w-full">
-            <%= live_component @socket,
-                WeatherWeb.WeatherStationLiveComponent,
-                id: station,
-                station: station %>
+            <.live_component module={WeatherWeb.WeatherStationLiveComponent}
+              id={station} station={station} />
           </div>
 
           <%= link to: "#", "phx-click": "clear_station",

@@ -7,13 +7,13 @@ defmodule Weather.WeatherStationInfo do
       "&units=imperial&q=#{station}"
   end
 
-  def call_weather_info_webservice(station) do
+  defp call_weather_info_webservice(station) do
     station
     |> format_weather_info_url
     |> HTTPoison.get!()
   end
 
-  def extract_weather_info_from_response(resp) do
+  defp extract_weather_info_from_response(resp) do
     resp
     |> Map.get(:body)
     |> Jason.decode(keys: :atoms)
@@ -23,11 +23,25 @@ defmodule Weather.WeatherStationInfo do
     IO.puts("Retrieving weather station info for station: #{station}")
 
     with %{status_code: 200} = resp <- call_weather_info_webservice(station),
-         {:ok, body} <- extract_weather_info_from_response(resp) do
-      body
+         {:ok, body} <- extract_weather_info_from_response(resp),
+         station_data <- normalize_station_data(body) do
+      station_data
     else
       %{status_code: 404} -> %{error_message: "Could not find weather station: #{station}."}
       _error -> %{error_message: "Something went wrong retrieving station #{station}!"}
     end
+  end
+
+  defp normalize_station_data(raw_station_data) do
+    %{
+      name: raw_station_data.name,
+      icon: get_in(raw_station_data.weather,[Access.at(0),:icon]),
+      conditions: get_in(raw_station_data.weather,[Access.at(0), :description]),
+      curr_temp: trunc(raw_station_data.main.temp),
+      feels_like: trunc(raw_station_data.main.feels_like),
+      temp_max: trunc(raw_station_data.main.temp_max),
+      temp_min: trunc(raw_station_data.main.temp_min),
+      humidity: trunc(raw_station_data.main.humidity)
+    }
   end
 end

@@ -19,4 +19,58 @@ defmodule WeatherWeb.WeatherStationLiveComponent do
     station_info = WeatherStationInfo.get_weather_station_info(station)
     assign(socket, :station_data, station_info)
   end
+
+  @impl true
+  def render(assigns) do
+    ~H"""
+      <div class="station-info flex flex-row mb-3">
+        <.station_component station_data={@station_data} />
+      </div>
+    """
+  end
+
+  defp station_component(assigns) when is_map_key(assigns.station_data, :error_message) do
+    ~H"""
+      <div class="summary">
+        <%= @station_data.error_message %>
+      </div>
+    """
+  end
+
+  defp station_component(assigns) do
+    ~H"""
+      <div class="summary w-2/5">
+        <div class="text-lg font-bold"><%= @station_data.name %></div>
+        <.conditions_summary class="mr-2" station_data={@station_data} />
+      </div>
+      <.station_summary class="w-3/5 text-sm" station_data={@station_data} />
+    """
+  end
+
+  defp conditions_icon(assigns) do
+    ~H"""
+    <img src={"http://openweathermap.org/img/wn/#{@icon}.png"} {Map.drop(assigns,[:icon])}/>
+    """
+  end
+
+  defp station_summary(assigns) do
+    ~H"""
+    <div {Map.drop(assigns,[:station_data])}>
+      Curr. temperature: <%= @station_data.curr_temp %>&deg; F<br>
+      Feels like: <%= @station_data.feels_like %>&deg; F<br>
+      Today's high: <%= @station_data.temp_max %>&deg; F<br>
+      Today's low: <%= @station_data.temp_min %>&deg; F<br>
+      Rel. humidity: <%= @station_data.humidity %>%<br>
+    </div>
+    """
+  end
+
+  defp conditions_summary(assigns) do
+    ~H"""
+      <div {Map.drop(assigns, [:station_data])}>
+        <.conditions_icon icon={@station_data.icon} class="weather-icon"/>
+        <i class="conditions text-sm"><%= @station_data.conditions %></i>
+      </div>
+    """
+  end
 end
