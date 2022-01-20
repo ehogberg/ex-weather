@@ -55,6 +55,38 @@ defmodule WeatherWeb.WeatherLive do
   def handle_event("clear_station", %{"station-id" => station_id}, socket),
     do: {:noreply, clear_station(socket, station_id)}
 
+
+  @impl true
+  def render(assigns) do
+    ~H"""
+    <div class="flex flex-col">
+      <div class="flex-grow text-center font-bold text-2xl mb-4">
+        Phoenix LiveView Weather
+      </div>
+      <.live_component
+        module={WeatherWeb.WeatherStationListLiveComponent}
+        id="live_list" stations={@stations}
+        last_updated_at={@last_updated_at}
+        countdown_timer={@countdown_timer} />
+      <.footer />
+    </div>
+    """
+  end
+
+  def footer(assigns) do
+    ~H"""
+    <div class="flex-grow text-center text-sm italic">
+      Weather data from Open Weather Map:
+      <a href='https://openweathermap.org'
+        class="hover:text-blue-500">https://openweathermap.org</a>
+    <br>
+      Find the sourcecode for this at
+      <a href="https://github.com/ehogberg/ex-weather"
+        class="hover:text-blue-500">https://github.com/ehogberg/ex-weather</a>
+    </div>
+    """
+  end
+
   # Local helpers below...
 
   defp parse_stations(stations_param) when stations_param == "", do: []
