@@ -15,6 +15,7 @@ config :weather, WeatherWeb.Endpoint,
   http: [port: {:system, "PORT"}],
   secret_key_base: "${SECRET_KEY_BASE}",
   url: [host: "${APP_NAME}.gigalixirapp.com", port: 443],
+  force_ssl: [hsts: true],
   cache_static_manifest: "priv/static/cache_manifest.json",
   version: Mix.Project.config()[:version]
 
