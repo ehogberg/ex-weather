@@ -33,6 +33,12 @@ defmodule WeatherWeb.WeatherLive do
   end
 
   @impl true
+  def handle_params(_params, uri, socket) do
+    IO.inspect(uri)
+    {:noreply, assign(socket, :uri, uri)}
+  end
+
+  @impl true
   def handle_info(:check_update, socket) do
     schedule_next_countdown_timer_check(socket)
 
@@ -66,6 +72,7 @@ defmodule WeatherWeb.WeatherLive do
       <.live_component
         module={WeatherWeb.WeatherStationListLiveComponent}
         id="live_list" stations={@stations}
+        uri={@uri}
         last_updated_at={@last_updated_at}
         countdown_timer={@countdown_timer} />
       <.footer />

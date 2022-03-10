@@ -18,7 +18,7 @@ defmodule WeatherWeb.WeatherStationListLiveComponent do
         class="flex flex-row flex-wrap mb-4" />
 
       <div class="flex-grow text-center mb-4">
-        <.list_permalink stations={@stations} socket={@socket}>Permalink</.list_permalink>
+        <.list_permalink stations={@stations} uri={@uri}>Permalink</.list_permalink>
       </div>
 
       <div class="flex-grow text-center text-sm italic">
@@ -31,13 +31,13 @@ defmodule WeatherWeb.WeatherStationListLiveComponent do
 
   def list_permalink(assigns) do
     ~H"""
-    <a href={"#{Routes.weather_url(@socket, :dashboard)}?stations=#{Enum.join(@stations,"|")}"}
+    <a href={"#{@uri}?stations=#{Enum.join(@stations,"|")}"}
         class="hover:text-blue-500">
       <%= render_slot(@inner_block) %>
     </a>
     """
   end
-  
+
   def weather_station_input(assigns) do
     ~H"""
     <div class="flex flex-row mb-4">
