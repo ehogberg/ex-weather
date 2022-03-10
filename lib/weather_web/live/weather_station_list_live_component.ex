@@ -37,6 +37,7 @@ defmodule WeatherWeb.WeatherStationListLiveComponent do
     </a>
     """
   end
+  
   def weather_station_input(assigns) do
     ~H"""
     <div class="flex flex-row mb-4">

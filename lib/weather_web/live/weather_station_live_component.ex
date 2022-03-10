@@ -43,7 +43,7 @@ defmodule WeatherWeb.WeatherStationLiveComponent do
         <div class="text-lg font-bold"><%= @station_data.name %></div>
         <.conditions_summary class="mr-2" station_data={@station_data} />
       </div>
-      <.station_summary class="w-3/5 text-sm" station_data={@station_data} />
+      <.station_summary  station_data={@station_data} />
     """
   end
 
@@ -55,7 +55,7 @@ defmodule WeatherWeb.WeatherStationLiveComponent do
 
   defp station_summary(assigns) do
     ~H"""
-    <div {Map.drop(assigns,[:station_data])}>
+    <div class="w-3/5 text-sm">
       Curr. temp.: <%= @station_data.curr_temp %>&deg; F<br>
       Feels like: <%= @station_data.feels_like %>&deg; F<br>
       Today's high: <%= @station_data.temp_max %>&deg; F<br>
@@ -67,7 +67,7 @@ defmodule WeatherWeb.WeatherStationLiveComponent do
 
   defp conditions_summary(assigns) do
     ~H"""
-      <div {Map.drop(assigns, [:station_data])}>
+      <div class="mr-2">
         <.conditions_icon icon={@station_data.icon} class="weather-icon"/>
         <span class="conditions text-sm"><%= @station_data.conditions %></span>
       </div>
