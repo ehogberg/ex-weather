@@ -31,7 +31,7 @@ defmodule WeatherWeb.WeatherStationListLiveComponent do
 
   def list_permalink(assigns) do
     ~H"""
-    <a href={"#{@uri}"}
+    <a href={"#{@uri}?stations=#{Enum.join(@stations,"|")}"}
         class="hover:text-blue-500">
       <%= render_slot(@inner_block) %>
     </a>
