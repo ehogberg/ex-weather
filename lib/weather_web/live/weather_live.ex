@@ -35,7 +35,13 @@ defmodule WeatherWeb.WeatherLive do
   @impl true
   def handle_params(_params, uri, socket) do
     IO.inspect(uri)
-    {:noreply, assign(socket, :uri, uri)}
+    {:noreply, assign(socket, :uri, base_uri(uri))}
+  end
+
+  defp base_uri(uri) do
+      parsed_uri = URI.parse(uri)
+
+      "#{parsed_uri.scheme}://#{parsed_uri.authority}/"
   end
 
   @impl true
