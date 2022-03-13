@@ -8,6 +8,7 @@ defmodule WeatherWeb.WeatherLive do
   the container.
   """
   use WeatherWeb, :live_view
+  alias Weather.WeatherStationInfo
   require Logger
 
   @doc """
@@ -55,7 +56,9 @@ defmodule WeatherWeb.WeatherLive do
       Logger.debug("Refreshing weather info for #{inspect(socket.assigns.stations)}")
 
       for station <- socket.assigns.stations do
-        send_update(WeatherWeb.WeatherStationLiveComponent, id: station, station: station)
+        send_update(WeatherWeb.WeatherStationLiveComponent,
+          id: station, station: station,
+          station_data_fn: &WeatherStationInfo.get_weather_station_info/1)
       end
 
       {:noreply, assign_next_update(socket)}
