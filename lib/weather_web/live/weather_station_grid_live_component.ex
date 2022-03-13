@@ -6,6 +6,7 @@ defmodule WeatherWeb.WeatherStationGridLiveComponent do
   the station from the working list of stations.
   """
   use WeatherWeb, :live_component
+  alias Weather.WeatherStationInfo
 
   @impl true
   def handle_event("clear_station", %{"station-id" => station_id}, socket) do
@@ -23,6 +24,7 @@ defmodule WeatherWeb.WeatherStationGridLiveComponent do
           <div class="flex flex-row">
             <div class="w-full">
               <.live_component module={WeatherWeb.WeatherStationLiveComponent}
+                station_data_fn={&WeatherStationInfo.get_weather_station_info/1}
                 id={station} station={station} />
             </div>
 

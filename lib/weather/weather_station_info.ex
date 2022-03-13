@@ -1,8 +1,11 @@
 defmodule Weather.WeatherStationInfo do
+  @moduledoc """
+  Handles the retrieval of weather information for a weather station using the
+  OpenWeatherMap platform.
+  """
+
   require Logger
 
-  @moduledoc """
-  """
   def format_weather_info_url(station) do
     "https://api.openweathermap.org/data/2.5/weather?" <>
       "appid=#{Application.fetch_env!(:weather, :weather_service_api_key)}" <>

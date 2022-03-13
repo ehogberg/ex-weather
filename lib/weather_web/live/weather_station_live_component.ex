@@ -5,16 +5,15 @@ defmodule WeatherWeb.WeatherStationLiveComponent do
   """
   use WeatherWeb, :live_component
 
-  alias Weather.WeatherStationInfo
+  require Logger
 
   @impl true
-  def update(%{station: station}, socket) do
-    {:ok, assign_station_data(socket, station)}
+  def update(%{station: station, station_data_fn: station_data_fn}, socket) do
+    {:ok, assign_station_data(socket, station, station_data_fn)}
   end
 
-  defp assign_station_data(socket, station) do
-    station_info = WeatherStationInfo.get_weather_station_info(station)
-    assign(socket, :station_data, station_info)
+  defp assign_station_data(socket, station, station_data_fn) do
+    assign(socket, :station_data, station_data_fn.(station))
   end
 
   @impl true
