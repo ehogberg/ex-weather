@@ -1,10 +1,14 @@
 defmodule WeatherWeb.WeatherLive do
+
+  @refresh_interval 600 # in seconds
+
   @moduledoc """
   A LiveView stateful component, providing a container of WeatherWeb.WeatherStationLiveComponent's,
   and exposes functionality which can be used to add and remove new weather station components from
   the container.
   """
   use WeatherWeb, :live_view
+  require Logger
 
   @doc """
   Initializes the component state by creating a default set of WeatherStationLiveComponent's
@@ -34,7 +38,6 @@ defmodule WeatherWeb.WeatherLive do
 
   @impl true
   def handle_params(_params, uri, socket) do
-    IO.inspect(uri)
     {:noreply, assign(socket, :uri, base_uri(uri))}
   end
 
@@ -49,6 +52,8 @@ defmodule WeatherWeb.WeatherLive do
     schedule_next_countdown_timer_check(socket)
 
     if DateTime.diff(socket.assigns.next_update, DateTime.utc_now()) <= 0 do
+      Logger.debug("Refreshing weather info for #{inspect(socket.assigns.stations)}")
+
       for station <- socket.assigns.stations do
         send_update(WeatherWeb.WeatherStationLiveComponent, id: station, station: station)
       end
@@ -60,13 +65,12 @@ defmodule WeatherWeb.WeatherLive do
   end
 
   @impl true
-  def handle_event("add_station", %{"station" => %{"station_id" => station_id}}, socket),
+  def handle_info({:add_station, station_id}, socket),
     do: {:noreply, assign_new_station(socket, normalize_string(station_id))}
 
   @impl true
-  def handle_event("clear_station", %{"station-id" => station_id}, socket),
-    do: {:noreply, clear_station(socket, station_id)}
-
+  def handle_info({:clear_station, station_id}, socket),
+   do: {:noreply, clear_station(socket, station_id)}
 
   @impl true
   def render(assigns) do
@@ -76,7 +80,7 @@ defmodule WeatherWeb.WeatherLive do
         Phoenix LiveView Weather
       </div>
       <.live_component
-        module={WeatherWeb.WeatherStationListLiveComponent}
+        module={WeatherWeb.WeatherStationSummaryLiveComponent}
         id="live_list" stations={@stations}
         uri={@uri}
         last_updated_at={@last_updated_at}
@@ -125,7 +129,7 @@ defmodule WeatherWeb.WeatherLive do
     do: assign(socket, :countdown_timer, calc_countdown_timer(next_update))
 
   defp assign_next_update(socket) do
-    next_update = DateTime.utc_now() |> DateTime.add(600)
+    next_update = DateTime.utc_now() |> DateTime.add(@refresh_interval)
 
     socket
     |> assign(:last_updated_at, DateTime.utc_now())

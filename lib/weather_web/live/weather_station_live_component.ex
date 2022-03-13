@@ -8,11 +8,8 @@ defmodule WeatherWeb.WeatherStationLiveComponent do
   alias Weather.WeatherStationInfo
 
   @impl true
-  def update(%{station: station} = assigns, socket) do
-    {:ok,
-     socket
-     |> assign(assigns)
-     |> assign_station_data(station)}
+  def update(%{station: station}, socket) do
+    {:ok, assign_station_data(socket, station)}
   end
 
   defp assign_station_data(socket, station) do
@@ -41,7 +38,8 @@ defmodule WeatherWeb.WeatherStationLiveComponent do
     ~H"""
       <div class="summary w-2/5">
         <div class="text-lg font-bold"><%= @station_data.name %></div>
-        <.conditions_summary class="mr-2" station_data={@station_data} />
+        <.conditions_summary class="mr-2"
+          icon={@station_data.icon} conditions={@station_data.conditions} />
       </div>
       <.station_summary  station_data={@station_data} />
     """
@@ -49,7 +47,7 @@ defmodule WeatherWeb.WeatherStationLiveComponent do
 
   defp conditions_icon(assigns) do
     ~H"""
-    <img src={"http://openweathermap.org/img/wn/#{@icon}.png"} {Map.drop(assigns,[:icon])}/>
+    <img src={"http://openweathermap.org/img/wn/#{@icon}.png"}/>
     """
   end
 
@@ -68,8 +66,8 @@ defmodule WeatherWeb.WeatherStationLiveComponent do
   defp conditions_summary(assigns) do
     ~H"""
       <div class="mr-2">
-        <.conditions_icon icon={@station_data.icon} class="weather-icon"/>
-        <span class="conditions text-sm"><%= @station_data.conditions %></span>
+        <.conditions_icon icon={@icon}/>
+        <span class="conditions text-sm"><%= @conditions %></span>
       </div>
     """
   end

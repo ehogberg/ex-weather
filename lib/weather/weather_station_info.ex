@@ -1,4 +1,6 @@
 defmodule Weather.WeatherStationInfo do
+  require Logger
+
   @moduledoc """
   """
   def format_weather_info_url(station) do
@@ -20,15 +22,20 @@ defmodule Weather.WeatherStationInfo do
   end
 
   def get_weather_station_info(station) do
-    IO.puts("Retrieving weather station info for station: #{station}")
+    Logger.debug("Retrieving weather station info for station: #{station}")
 
     with %{status_code: 200} = resp <- call_weather_info_webservice(station),
          {:ok, body} <- extract_weather_info_from_response(resp),
          station_data <- normalize_station_data(body) do
+      Logger.debug("Successfully retrieved station data for #{station}.")
       station_data
     else
-      %{status_code: 404} -> %{error_message: "Could not find weather station: #{station}."}
-      _error -> %{error_message: "Something went wrong retrieving station #{station}!"}
+      %{status_code: 404} ->
+        Logger.warn("No such station: #{station}.")
+        %{error_message: "Could not find weather station: #{station}."}
+      error ->
+        Logger.warn("Error while retrieving data for station #{station}: #{inspect(error)}")
+        %{error_message: "Something went wrong retrieving station #{station}!"}
     end
   end
 
