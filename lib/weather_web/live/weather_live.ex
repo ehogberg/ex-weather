@@ -6,6 +6,11 @@ defmodule WeatherWeb.WeatherLive do
   A LiveView stateful component, providing a container of WeatherWeb.WeatherStationLiveComponent's,
   and exposes functionality which can be used to add and remove new weather station components from
   the container.
+
+  This view also serves as state controller for the list of stations being displayed.  Nested
+  components handle the input mechanics of adding new stations or deleting active ones from the
+  working list.  Those components send :add_station and :clear_station messages which are
+  caught by the view using handle_info(evt,socket) to update its list.
   """
   use WeatherWeb, :live_view
   alias Weather.WeatherStationInfo

@@ -2,9 +2,6 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
-/* This file is for your main application css. */
-/* @import "./weather.scss"; */
-@import "./weather.css";
 
 /* LiveView specific classes for your customizations */
 .phx-no-feedback.invalid-feedback,
