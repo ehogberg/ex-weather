@@ -55,7 +55,7 @@ defmodule WeatherWeb.WeatherStationSummaryLiveComponent do
       </span>
       <span class="ml-3">
         <button class="border" type="submit" form={@form_id}>
-          <i class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded far fa-plus fa-lg"></i>
+          <i class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded far fa-solid fa-plus-large"></i>
         </button>
       </span>
     </div>

@@ -6,7 +6,6 @@ defmodule WeatherWeb.WeatherStationGridLiveComponent do
   the station from the working list of stations.
   """
   use WeatherWeb, :live_component
-  alias Weather.WeatherStationInfo
 
   @impl true
   def handle_event("clear_station", %{"station-id" => station_id}, socket) do
@@ -28,7 +27,7 @@ defmodule WeatherWeb.WeatherStationGridLiveComponent do
 
             <i phx-click="clear_station" phx-target={@myself}
                phx-value-station-id={station}
-               class="cursor-pointer text-red-700 fas fa-window-close"></i>
+               class="cursor-pointer fas fa-duotone fa-xmark"></i>
           </div>
           <div>
             <div class="italic text-sm text-center">
