@@ -61,7 +61,7 @@ defmodule Weather.MixProject do
     [
       setup: ["deps.get"],
       format: ["format mix.exs lib/**/*.{ex,exs} test/**/*.{ex,exs}"],
-      "assets.deploy": ["tailwind default --minify","esbuild default --minify", "phx.digest"]
+      "assets.deploy": ["tailwind default --minify", "esbuild default --minify", "phx.digest"]
     ]
   end
 end

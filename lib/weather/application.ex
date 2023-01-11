@@ -10,6 +10,7 @@ defmodule Weather.Application do
       # Start the Telemetry supervisor
       WeatherWeb.Telemetry,
       {Phoenix.PubSub, name: Weather.PubSub},
+      Weather.WeatherServicesSupervisor,
       # Start the Endpoint (http/https)
       WeatherWeb.Endpoint
       # Start a worker by calling: Weather.Worker.start_link(arg)

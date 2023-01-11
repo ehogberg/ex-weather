@@ -1,19 +1,13 @@
 defmodule WeatherWeb.WeatherStationLiveComponent do
   @moduledoc """
-  Defines a LiveView stateful component which, given a weather station ID, retrieves current
-  weather data for that station and displays it.
   """
   use WeatherWeb, :live_component
 
   require Logger
 
   @impl true
-  def update(%{station: station, station_data_fn: station_data_fn}, socket) do
-    {:ok, assign_station_data(socket, station, station_data_fn)}
-  end
-
-  defp assign_station_data(socket, station, station_data_fn) do
-    assign(socket, :station_data, station_data_fn.(station))
+  def update(%{station_data: station_data}, socket) do
+    {:ok, assign(socket, :station_data, station_data)}
   end
 
   @impl true

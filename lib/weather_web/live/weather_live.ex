@@ -1,6 +1,6 @@
 defmodule WeatherWeb.WeatherLive do
-
-  @refresh_interval 600 # in seconds
+  # in seconds
+  @refresh_interval 600
 
   @moduledoc """
   A LiveView stateful component, providing a container of WeatherWeb.WeatherStationLiveComponent's,
@@ -13,8 +13,9 @@ defmodule WeatherWeb.WeatherLive do
   caught by the view using handle_info(evt,socket) to update its list.
   """
   use WeatherWeb, :live_view
-  alias Weather.WeatherStationInfo
   require Logger
+  alias Weather.WeatherInfoService
+  alias Weather.WeatherInfoServiceSupervisor
 
   @doc """
   Initializes the component state by creating a default set of WeatherStationLiveComponent's
@@ -29,8 +30,6 @@ defmodule WeatherWeb.WeatherLive do
   """
   @impl true
   def mount(params, _sess, socket) do
-    schedule_next_countdown_timer_check(socket)
-
     stations =
       params
       |> Map.get("stations", "")
@@ -38,8 +37,7 @@ defmodule WeatherWeb.WeatherLive do
 
     {:ok,
      socket
-     |> assign_default_stations(stations)
-     |> assign_next_update()}
+     |> assign_default_stations(stations)}
   end
 
   @impl true
@@ -48,28 +46,8 @@ defmodule WeatherWeb.WeatherLive do
   end
 
   defp base_uri(uri) do
-      parsed_uri = URI.parse(uri)
-
-      "#{parsed_uri.scheme}://#{parsed_uri.authority}/"
-  end
-
-  @impl true
-  def handle_info(:check_update, socket) do
-    schedule_next_countdown_timer_check(socket)
-
-    if DateTime.diff(socket.assigns.next_update, DateTime.utc_now()) <= 0 do
-      Logger.debug("Refreshing weather info for #{inspect(socket.assigns.stations)}")
-
-      for station <- socket.assigns.stations do
-        send_update(WeatherWeb.WeatherStationLiveComponent,
-          id: station, station: station,
-          station_data_fn: &WeatherStationInfo.get_weather_station_info/1)
-      end
-
-      {:noreply, assign_next_update(socket)}
-    else
-      {:noreply, assign_countdown_timer(socket, socket.assigns.next_update)}
-    end
+    parsed_uri = URI.parse(uri)
+    "#{parsed_uri.scheme}://#{parsed_uri.authority}/"
   end
 
   @impl true
@@ -78,7 +56,29 @@ defmodule WeatherWeb.WeatherLive do
 
   @impl true
   def handle_info({:clear_station, station_id}, socket),
-   do: {:noreply, clear_station(socket, station_id)}
+    do: {:noreply, clear_station(socket, station_id)}
+
+  @impl true
+  def handle_info(
+        {:station_info_updated, station_id, current_conditions},
+        socket
+      ) do
+    Logger.debug("Received current conditions update for station #{station_id}.")
+
+    {:noreply,
+     update_station_current_conditions(
+       socket,
+       station_id,
+       current_conditions
+     )}
+  end
+
+  defp update_station_current_conditions(socket, station_id, current_conditions)
+       when is_map_key(socket.assigns.stations, station_id) do
+    assign(socket, :stations, Map.put(socket.assigns.stations, station_id, current_conditions))
+  end
+
+  defp update_station_current_conditions(socket, _, _), do: socket
 
   @impl true
   def render(assigns) do
@@ -90,9 +90,7 @@ defmodule WeatherWeb.WeatherLive do
       <.live_component
         module={WeatherWeb.WeatherStationSummaryLiveComponent}
         id="live_list" stations={@stations}
-        uri={@uri}
-        last_updated_at={@last_updated_at}
-        countdown_timer={@countdown_timer} />
+        uri={@uri}/>
       <.footer />
     </div>
     """
@@ -119,34 +117,43 @@ defmodule WeatherWeb.WeatherLive do
 
   defp assign_default_stations(socket, stations) when length(stations) == 0,
     do: assign_default_stations(socket, ["Chicago", "London", "Prague"])
-  defp assign_default_stations(socket, stations), do: assign(socket, :stations, stations)
 
-  defp assign_new_station(socket,new_station) when new_station == "", do: socket
+  defp assign_default_stations(socket, stations) do
+    initialized_stations =
+      Enum.reduce(stations, %{}, fn station_id, acc ->
+        Map.put(acc, station_id, initialize_new_station(station_id))
+      end)
+
+    assign(socket, :stations, initialized_stations)
+  end
+
+  defp initialize_new_station(station_id) do
+    WeatherInfoServiceSupervisor.start_child(station_id)
+    current_conditions = WeatherInfoService.station_current_conditions(station_id)
+    Phoenix.PubSub.subscribe(Weather.PubSub, "station:#{station_id}")
+    current_conditions
+  end
+
+  defp assign_new_station(socket, new_station) when new_station == "", do: socket
+
+  defp assign_new_station(socket, new_station)
+       when is_map_key(socket.assigns.stations, new_station),
+       do: socket
+
   defp assign_new_station(socket, new_station) do
-    if new_station in socket.assigns.stations do
+    assign(
+      socket,
+      :stations,
+      Map.put(socket.assigns.stations, new_station, initialize_new_station(new_station))
+    )
+  end
+
+  defp clear_station(socket, station_id) do
+    if length(Map.keys(socket.assigns.stations)) < 2 do
       socket
     else
-      assign(socket, :stations, socket.assigns.stations ++ [new_station])
+      Phoenix.PubSub.unsubscribe(Weather.PubSub, "station:#{station_id}")
+      assign(socket, :stations, Map.delete(socket.assigns.stations, station_id))
     end
   end
-
-  defp schedule_next_countdown_timer_check(socket),
-    do: if(connected?(socket), do: Process.send_after(self(), :check_update, 1000))
-
-  defp assign_countdown_timer(socket, next_update),
-    do: assign(socket, :countdown_timer, calc_countdown_timer(next_update))
-
-  defp assign_next_update(socket) do
-    next_update = DateTime.utc_now() |> DateTime.add(@refresh_interval)
-
-    socket
-    |> assign(:last_updated_at, DateTime.utc_now())
-    |> assign(:next_update, next_update)
-    |> assign_countdown_timer(next_update)
-  end
-
-  defp clear_station(socket, _) when length(socket.assigns.stations) < 2, do: socket
-
-  defp clear_station(socket, station_id),
-    do: assign(socket, :stations, List.delete(socket.assigns.stations, station_id))
 end

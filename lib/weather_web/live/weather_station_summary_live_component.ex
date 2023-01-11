@@ -16,13 +16,8 @@ defmodule WeatherWeb.WeatherStationSummaryLiveComponent do
         id="summary" stations={@stations} />
 
       <div class="flex-grow text-center mb-4">
-        <.list_permalink stations={@stations} uri={@uri}
+        <.list_permalink stations={Map.keys(@stations)} uri={@uri}
           class="hover:text-blue-500">Permalink</.list_permalink>
-      </div>
-
-      <div class="flex-grow text-center text-sm italic">
-        Last updated at <%= friendly_timestamp(@last_updated_at) %> UTC.
-        Next update in <%= countdown_string(@countdown_timer)%>
       </div>
     </div>
     """

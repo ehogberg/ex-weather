@@ -15,7 +15,9 @@ defmodule WeatherWeb.WeatherLiveTests do
     Enum.reduce(station_list, socket, fn el, socket ->
       elem(
         WeatherLive.handle_info(
-          {:clear_station,el},socket),
+          {:clear_station, el},
+          socket
+        ),
         1
       )
     end)
@@ -28,19 +30,14 @@ defmodule WeatherWeb.WeatherLiveTests do
 
     test "when no weather stations are provided", %{socket: socket} do
       {:ok, socket} = WeatherLive.mount(%{}, nil, socket)
-      assert socket.assigns.stations == ["Chicago", "London", "Prague"]
+      assert Map.keys(socket.assigns.stations) ==
+        ["Chicago", "London", "Prague"]
     end
 
     test "when stations are provided", %{socket: socket} do
       params = %{"stations" => "Peoria|Louisville"}
       {:ok, socket} = WeatherLive.mount(params, nil, socket)
-      assert socket.assigns.stations == ["Peoria", "Louisville"]
-    end
-
-    test "callback time set appropriately in the future", %{socket: socket} do
-      ten_minutes_hence = DateTime.utc_now() |> DateTime.add(600)
-      {:ok, socket} = WeatherLive.mount(%{}, nil, socket)
-      assert DateTime.diff(socket.assigns.next_update, ten_minutes_hence) < 1
+      assert Map.keys(socket.assigns.stations) == ["Louisville","Peoria"]
     end
   end
 
@@ -50,42 +47,37 @@ defmodule WeatherWeb.WeatherLiveTests do
     end
 
     test "adding an additional station", %{mounted_socket: mounted_socket} do
-      {:noreply, socket} =
-        WeatherLive.handle_info( {:add_station, "Springfield"}, mounted_socket)
+      {:noreply, socket} = WeatherLive.handle_info({:add_station, "Springfield"}, mounted_socket)
 
-      assert socket.assigns.stations == ["Chicago", "London", "Prague", "Springfield"]
+      assert Map.keys(socket.assigns.stations) ==
+        ["Chicago", "London", "Prague", "Springfield"]
     end
 
     test "duplicate station addition requests are ignored", %{mounted_socket: mounted_socket} do
-      {:noreply, socket} =
-        WeatherLive.handle_info({:add_station, "Prague"}, mounted_socket)
-      assert socket.assigns.stations == ["Chicago", "London", "Prague"]
+      {:noreply, socket} = WeatherLive.handle_info({:add_station, "Prague"}, mounted_socket)
+      assert Map.keys(socket.assigns.stations) == ["Chicago", "London", "Prague"]
     end
 
     test "adding an empty (nil or blank) station specifier is ignored",
-      %{mounted_socket: mounted_socket} do
-      {:noreply, socket} =
-        WeatherLive.handle_info({:add_station, ""}, mounted_socket)
-      assert length(socket.assigns.stations) == 3
+         %{mounted_socket: mounted_socket} do
+      {:noreply, socket} = WeatherLive.handle_info({:add_station, ""}, mounted_socket)
+      assert length(Map.keys(socket.assigns.stations)) == 3
 
-      {:noreply, socket} =
-        WeatherLive.handle_info({:add_station, ""}, mounted_socket)
-      assert length(socket.assigns.stations) == 3
+      {:noreply, socket} = WeatherLive.handle_info({:add_station, ""}, mounted_socket)
+      assert length(Map.keys(socket.assigns.stations)) == 3
 
-      {:noreply, socket} =
-        WeatherLive.handle_info({:add_station, nil}, mounted_socket)
-      assert length(socket.assigns.stations) == 3
+      {:noreply, socket} = WeatherLive.handle_info({:add_station, nil}, mounted_socket)
+      assert length(Map.keys(socket.assigns.stations)) == 3
     end
 
     test "clearing a station", %{mounted_socket: mounted_socket} do
-      {:noreply, socket} =
-        WeatherLive.handle_info({:clear_station, "London"}, mounted_socket)
-      assert socket.assigns.stations == ["Chicago", "Prague"]
+      {:noreply, socket} = WeatherLive.handle_info({:clear_station, "London"}, mounted_socket)
+      assert Map.keys(socket.assigns.stations) == ["Chicago", "Prague"]
     end
 
     test "can't clear the last station in the set", %{mounted_socket: mounted_socket} do
       socket = clear_multiple_stations(mounted_socket, ["Chicago", "London", "Prague"])
-      assert socket.assigns.stations == ["Prague"]
+      assert Map.keys(socket.assigns.stations) == ["Prague"]
     end
   end
 end

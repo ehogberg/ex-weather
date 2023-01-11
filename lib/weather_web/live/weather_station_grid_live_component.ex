@@ -10,27 +10,30 @@ defmodule WeatherWeb.WeatherStationGridLiveComponent do
 
   @impl true
   def handle_event("clear_station", %{"station-id" => station_id}, socket) do
-    send(self(),{:clear_station, station_id})
+    send(self(), {:clear_station, station_id})
     {:noreply, socket}
   end
 
   @impl true
   def render(assigns) do
-
     ~H"""
     <div class="flex flex-row flex-wrap mb-4">
-      <%= for station <- @stations do %>
+      <%= for {station, station_data} <- @stations do %>
         <div class="w-1/2 p-2 mb-1px mr-1px border border-slate-400">
           <div class="flex flex-row">
             <div class="w-full">
               <.live_component module={WeatherWeb.WeatherStationLiveComponent}
-                station_data_fn={&WeatherStationInfo.get_weather_station_info/1}
-                id={station} station={station} />
+                id={station} station_data={station_data} />
             </div>
 
             <i phx-click="clear_station" phx-target={@myself}
                phx-value-station-id={station}
                class="cursor-pointer text-red-700 fas fa-window-close"></i>
+          </div>
+          <div>
+            <div class="italic text-sm text-center">
+              Last checked at: <%= station_data.weather_checked_at%>
+            </div>
           </div>
         </div>
       <% end %>
