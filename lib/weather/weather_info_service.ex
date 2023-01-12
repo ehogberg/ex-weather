@@ -3,7 +3,7 @@ defmodule Weather.WeatherInfoService do
 
   alias Weather.WeatherStationInfo
   alias Phoenix.PubSub
-
+  import Weather.Util
   require Logger
 
   @check_interval 1000 * 60 * 10   # ten minutes
@@ -26,14 +26,6 @@ defmodule Weather.WeatherInfoService do
       via_tuple(station_id),
       :current_conditions
     )
-  end
-
-  defp via_tuple(name) do
-    normalized_name = name
-    |> String.downcase()
-    |> String.replace(~r"[[:blank]]", "")
-
-    {:via, Registry, {Weather.WeatherServicesRegistry, normalized_name}}
   end
 
   ## Behaviour implementation

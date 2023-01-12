@@ -16,6 +16,7 @@ defmodule WeatherWeb.WeatherLive do
   require Logger
   alias Weather.WeatherInfoService
   alias Weather.WeatherInfoServiceSupervisor
+  alias Weather.WeatherServiceMonitor
 
   @doc """
   Initializes the component state by creating a default set of WeatherStationLiveComponent's
@@ -118,18 +119,24 @@ defmodule WeatherWeb.WeatherLive do
   defp assign_default_stations(socket, stations) when length(stations) == 0,
     do: assign_default_stations(socket, ["Chicago", "London", "Prague"])
 
-  defp assign_default_stations(socket, stations) do
-    initialized_stations =
-      Enum.reduce(stations, %{}, fn station_id, acc ->
-        Map.put(acc, station_id, initialize_new_station(station_id))
-      end)
+  defp assign_default_stations(socket, default_stations) do
 
-    assign(socket, :stations, initialized_stations)
+      stations =
+        if connected?(socket) do
+          Enum.reduce(default_stations, %{}, fn station_id, acc ->
+            Map.put(acc, station_id, initialize_new_station(station_id))
+          end)
+        else
+          %{}
+        end
+
+      assign(socket, :stations, stations)
   end
 
   defp initialize_new_station(station_id) do
     WeatherInfoServiceSupervisor.start_child(station_id)
     current_conditions = WeatherInfoService.station_current_conditions(station_id)
+    WeatherServiceMonitor.add_station_monitor(station_id,self())
     Phoenix.PubSub.subscribe(Weather.PubSub, "station:#{station_id}")
     current_conditions
   end
@@ -153,6 +160,7 @@ defmodule WeatherWeb.WeatherLive do
       socket
     else
       Phoenix.PubSub.unsubscribe(Weather.PubSub, "station:#{station_id}")
+      WeatherServiceMonitor.remove_station_monitor(station_id, self())
       assign(socket, :stations, Map.delete(socket.assigns.stations, station_id))
     end
   end

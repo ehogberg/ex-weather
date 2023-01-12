@@ -9,7 +9,8 @@ defmodule Weather.WeatherServicesSupervisor do
   def init(_args) do
     children = [
       {Registry, keys: :unique, name: Weather.WeatherServicesRegistry},
-      Weather.WeatherInfoServiceSupervisor
+      Weather.WeatherServiceMonitor,
+      Weather.WeatherInfoServiceSupervisor,
     ]
 
     Supervisor.init(children, strategy: :one_for_one)
