@@ -6,7 +6,10 @@ defmodule Weather.Application do
   use Application
 
   def start(_type, _args) do
+    topologies = Application.get_env(:libcluster, :topologies) || []
+
     children = [
+      {Cluster.Supervisor, [topologies, [name: Weather.ClusterSupervisor]]},
       # Start the Telemetry supervisor
       WeatherWeb.Telemetry,
       {Phoenix.PubSub, name: Weather.PubSub},

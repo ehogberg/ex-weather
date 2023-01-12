@@ -48,7 +48,8 @@ defmodule Weather.MixProject do
       {:plug_cowboy, "~> 2.0"},
       {:esbuild, "~> 0.2", runtime: Mix.env() == :dev},
       {:tailwind, "~> 0.1", runtime: Mix.env() == :dev},
-      {:tzdata, "~> 1.1"}
+      {:tzdata, "~> 1.1"},
+      {:libcluster, "~> 3.2"},
     ]
   end
 

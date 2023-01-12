@@ -1,7 +1,17 @@
 import Config
 
-# Do not print debug messages in production
-config :logger, level: :info
+config :logger, level: :debug
+
+config :libcluster,
+  topologies: [
+    k8s: [
+      strategy: Cluster.Strategy.Kubernetes,
+      config: [
+        kubernetes_selector: System.get_env("LIBCLUSTER_KUBERNETES_SELECTOR"),
+        kubernetes_node_basename: System.get_env("LIBCLUSTER_KUBERNETES_NODE_BASENAME")
+      ]
+    ]
+  ]
 
 # ## SSL Support
 #
