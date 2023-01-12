@@ -1,7 +1,9 @@
 defmodule Weather.WeatherServiceMonitor do
+  alias Weather.WeatherInfoService
   use GenServer
   require Logger
   import Weather.Util
+
 
   def start_link(_args) do
     GenServer.start_link(__MODULE__,[], name: __MODULE__)
@@ -23,8 +25,15 @@ defmodule Weather.WeatherServiceMonitor do
 
   @impl true
   def init(_args) do
+    Logger.info("Starting station service monitor (autoreaper interval: #{reaper_interval()})")
+    Process.send_after(
+      self(),
+      :reap_unused_services,
+      reaper_interval())
     {:ok, %{}}
   end
+
+  defp reaper_interval(), do: :weather |> Application.get_env(:reaper_interval)
 
   @impl true
   def handle_call(:server_state,_,state) do
@@ -52,8 +61,27 @@ defmodule Weather.WeatherServiceMonitor do
   end
 
   @impl true
+  def handle_info(:reap_unused_services, state) do
+    unused_services = state
+    |> Map.filter(fn ({_,v}) -> MapSet.size(v) == 0 end)
+    |> Map.keys()
+
+    Logger.debug("Reaping unused services: #{Enum.join(unused_services,",")}")
+    for service <- unused_services,
+      do: WeatherInfoService.stop(service)
+
+    Process.send_after(
+      self(),
+      :reap_unused_services,
+      reaper_interval()
+    )
+
+    {:noreply, Map.drop(state, unused_services)}
+  end
+
+  @impl true
   def handle_info(msg, state) do
-    IO.inspect(msg)
+    Logger.debug("General message received: #{IO.inspect(msg)}")
     {:noreply, state}
   end
 

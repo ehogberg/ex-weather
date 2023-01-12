@@ -8,7 +8,8 @@
 import Config
 
 config :weather,
-  ecto_repos: [Weather.Repo]
+  ecto_repos: [Weather.Repo],
+  reaper_interval: 1_800_000 #30 minute interval on autoreaper
 
 # Configures the endpoint
 config :weather, WeatherWeb.Endpoint,

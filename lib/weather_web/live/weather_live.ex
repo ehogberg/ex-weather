@@ -1,7 +1,4 @@
 defmodule WeatherWeb.WeatherLive do
-  # in seconds
-  @refresh_interval 600
-
   @moduledoc """
   A LiveView stateful component, providing a container of WeatherWeb.WeatherStationLiveComponent's,
   and exposes functionality which can be used to add and remove new weather station components from

@@ -13,7 +13,11 @@ defmodule Weather.WeatherInfoServiceSupervisor do
   def start_child(station_id) do
     DynamicSupervisor.start_child(
       __MODULE__,
-      {Weather.WeatherInfoService, station_id}
+      %{
+        id: Weather.WeatherInfoService,
+        start: {Weather.WeatherInfoService, :start_link, [station_id]},
+        restart: :transient
+      }
     )
   end
 end

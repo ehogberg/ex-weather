@@ -28,6 +28,13 @@ defmodule Weather.WeatherInfoService do
     )
   end
 
+  def stop(station_id) do
+    GenServer.stop(
+      via_tuple(station_id),
+      {:shutdown, :unused}
+    )
+  end
+
   ## Behaviour implementation
   @impl true
   def init([station_id]) do
@@ -54,6 +61,11 @@ defmodule Weather.WeatherInfoService do
   def handle_info(:update_weather_info, state) do
     Process.send_after(self(), :update_weather_info, @check_interval)
     {:noreply, load_station_and_update_state(state)}
+  end
+
+  @impl true
+  def terminate(reason, state) do
+    Logger.debug("Weather station info service #{state.station_id} shutting down. (#{tuple_to_string(reason)})")
   end
 
   defp load_station_and_update_state(%{station_id: station_id} = state) do

@@ -69,3 +69,6 @@ config :phoenix, :stacktrace_depth, 20
 
 # Initialize plugs at runtime for faster development compilation
 config :phoenix, :plug_init_mode, :runtime
+
+# Autoreaper interval
+config :weather, :reaper_interval, 60000  #1 minute on autoreaper in dev
