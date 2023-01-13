@@ -47,10 +47,16 @@ defmodule WeatherWeb.WeatherStationSummaryLiveComponent do
   def time_display_info(assigns) when assigns.timezone == "Etc/UTC" do
     ~H"""
     <div>
-    <p>Times displayed as UTC</p>
+    <p class="mb-2">Times displayed as UTC</p>
     <p>
-    Setting the tz query parameter to an IANA timezone specifier will
-    display times in the specified timezone.
+    Setting the <code>tz</code> query string parameter to an
+    <a class="hover:text-blue-500" href="https://en.wikipedia.org/wiki/List_of_tz_database_time_zones">
+    IANA timezone specifier
+    </a>
+    <br/>
+     will
+    display times
+    as relative to the specified timezone.
     </p>
     </div>
     """
