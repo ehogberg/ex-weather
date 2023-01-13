@@ -6,9 +6,7 @@ defmodule Weather.WeatherInfoService do
   import Weather.Util
   require Logger
 
-  @check_interval 1000 * 60 * 10   # ten minutes
-
-  ## Public API
+    ## Public API
 
   def start_link(station_id) do
     GenServer.start_link(__MODULE__, [station_id], name: via_tuple(station_id))
@@ -43,7 +41,7 @@ defmodule Weather.WeatherInfoService do
 
   @impl true
   def handle_continue(:initial_station_load, state) do
-    Process.send_after(self(), :update_weather_info, @check_interval)
+    Process.send_after(self(), :update_weather_info, check_interval())
     {:noreply, load_station_and_update_state(state)}
   end
 
@@ -59,7 +57,7 @@ defmodule Weather.WeatherInfoService do
 
   @impl true
   def handle_info(:update_weather_info, state) do
-    Process.send_after(self(), :update_weather_info, @check_interval)
+    Process.send_after(self(), :update_weather_info, check_interval())
     {:noreply, load_station_and_update_state(state)}
   end
 
@@ -79,4 +77,6 @@ defmodule Weather.WeatherInfoService do
 
     update_in(state, [:history], &[current_info | Enum.take(&1, 99)])
   end
+
+  defp check_interval, do: Application.get_env(:weather, :station_refresh_interval)
 end

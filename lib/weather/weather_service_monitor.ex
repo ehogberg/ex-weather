@@ -33,7 +33,7 @@ defmodule Weather.WeatherServiceMonitor do
     {:ok, %{}}
   end
 
-  defp reaper_interval(), do: :weather |> Application.get_env(:reaper_interval)
+  defp reaper_interval(), do: Application.get_env(:weather, :reaper_interval)
 
   @impl true
   def handle_call(:server_state,_,state) do

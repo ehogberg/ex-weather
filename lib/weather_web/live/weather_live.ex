@@ -11,6 +11,7 @@ defmodule WeatherWeb.WeatherLive do
   """
   use WeatherWeb, :live_view
   require Logger
+  import Weather.Util
   alias Weather.WeatherInfoService
   alias Weather.WeatherInfoServiceSupervisor
   alias Weather.WeatherServiceMonitor
@@ -33,9 +34,13 @@ defmodule WeatherWeb.WeatherLive do
       |> Map.get("stations", "")
       |> parse_stations()
 
+    tz = Map.get(params,"tz", "Etc/UTC")
+
     {:ok,
      socket
-     |> assign_default_stations(stations)}
+     |> assign_default_stations(stations)
+     |> assign(:timezone, tz)
+    }
   end
 
   @impl true
@@ -87,7 +92,7 @@ defmodule WeatherWeb.WeatherLive do
       </div>
       <.live_component
         module={WeatherWeb.WeatherStationSummaryLiveComponent}
-        id="live_list" stations={@stations}
+        id="live_list" stations={@stations} timezone={@timezone}
         uri={@uri}/>
       <.footer />
     </div>

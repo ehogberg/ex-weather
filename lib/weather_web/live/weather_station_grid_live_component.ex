@@ -6,6 +6,7 @@ defmodule WeatherWeb.WeatherStationGridLiveComponent do
   the station from the working list of stations.
   """
   use WeatherWeb, :live_component
+  import Weather.Util
 
   @impl true
   def handle_event("clear_station", %{"station-id" => station_id}, socket) do
@@ -17,7 +18,8 @@ defmodule WeatherWeb.WeatherStationGridLiveComponent do
   def render(assigns) do
     ~H"""
     <div>
-      <.station_entries id='station_entry_grid' stations={@stations} myself={@myself}/>
+      <.station_entries id='station_entry_grid'
+        stations={@stations} myself={@myself} timezone={@timezone}/>
     </div>
     """
   end
@@ -39,7 +41,11 @@ defmodule WeatherWeb.WeatherStationGridLiveComponent do
             </div>
             <div>
               <div class="italic text-sm text-center">
-                Last checked at: <%= station_data.weather_checked_at%>
+                Last checked at:
+                <%= station_data.weather_checked_at
+                |> to_localtime(@timezone)
+                |> friendly_time()
+                %>
               </div>
             </div>
           </div>

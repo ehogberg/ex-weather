@@ -89,7 +89,6 @@ defmodule WeatherWeb do
 
       import WeatherWeb.ErrorHelpers
       import WeatherWeb.Gettext
-      import WeatherWeb.Helpers
       alias WeatherWeb.Router.Helpers, as: Routes
     end
   end

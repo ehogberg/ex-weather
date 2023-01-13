@@ -71,4 +71,6 @@ config :phoenix, :stacktrace_depth, 20
 config :phoenix, :plug_init_mode, :runtime
 
 # Autoreaper interval
-config :weather, :reaper_interval, 60000  #1 minute on autoreaper in dev
+config :weather,
+  station_refresh_interval: 60_000,
+  reaper_interval: 120_000  #2 minute on autoreaper in dev

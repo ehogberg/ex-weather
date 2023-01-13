@@ -13,11 +13,15 @@ defmodule WeatherWeb.WeatherStationSummaryLiveComponent do
 
       <.live_component
         module={WeatherWeb.WeatherStationGridLiveComponent}
-        id="summary" stations={@stations} />
+        id="summary" stations={@stations} timezone={@timezone}/>
 
       <div class="flex-grow text-center mb-4">
         <.list_permalink stations={Map.keys(@stations)} uri={@uri}
-          class="hover:text-blue-500">Permalink</.list_permalink>
+          timezone={@timezone} class="hover:text-blue-500">[Permalink to the above stations]</.list_permalink>
+      </div>
+
+      <div class="text-center text-sm mb-4">
+        <.time_display_info timezone={@timezone} />
       </div>
     </div>
     """
@@ -34,9 +38,29 @@ defmodule WeatherWeb.WeatherStationSummaryLiveComponent do
     attrs = assigns_to_attributes(assigns, [:uri, :stations])
 
     ~H"""
-    <a href={"#{@uri}?stations=#{Enum.join(@stations,"|")}"} {attrs}>
+    <a href={"#{@uri}?stations=#{Enum.join(@stations,"|")}&tz=#{@timezone}"} {attrs}>
       <%= render_slot(@inner_block) %>
     </a>
+    """
+  end
+
+  def time_display_info(assigns) when assigns.timezone == "Etc/UTC" do
+    ~H"""
+    <div>
+    <p>Times displayed as UTC</p>
+    <p>
+    Setting the tz query parameter to an IANA timezone specifier will
+    display times in the specified timezone.
+    </p>
+    </div>
+    """
+  end
+
+  def time_display_info(assigns) do
+    ~H"""
+    <div>
+    <p>Times displayed relative to timezone <strong><%= @timezone %></strong></p>
+    </div>
     """
   end
 
