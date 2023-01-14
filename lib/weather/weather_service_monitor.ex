@@ -1,4 +1,15 @@
 defmodule Weather.WeatherServiceMonitor do
+  @moduledoc """
+  GenServer-based monitoring for tracking usage of weather services and also
+  implementing a periodic reaper function which stops services no longer being
+  used.   Clients using a service should register their interest using
+  add_station_monitor(pid) and, when no longer interested/terminating processing,
+  use remove_station_monitor(pid) to remove themselves from the monitor.
+
+  Registered clients will have a monitor created by the service which signals
+  shutdowns/terminations and will appropriate reduce the reference counts of
+  any services subscribed to by the terminating process.
+  """
   alias Weather.WeatherInfoService
   use GenServer
   require Logger

@@ -1,4 +1,8 @@
 defmodule Weather.WeatherInfoServiceSupervisor do
+  @moduledoc """
+  DynamicSupervisor used to manage WeatherInfoService instances.  Exposes
+  a start_child helper useful for adding a new station service.
+  """
   use DynamicSupervisor
 
   def start_link(args) do

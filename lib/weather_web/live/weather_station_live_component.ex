@@ -1,8 +1,7 @@
 defmodule WeatherWeb.WeatherStationLiveComponent do
-  @moduledoc """
-  """
-  use WeatherWeb, :live_component
+  @moduledoc false
 
+  use WeatherWeb, :live_component
   require Logger
 
   @impl true

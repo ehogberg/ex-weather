@@ -1,12 +1,11 @@
 defmodule WeatherWeb.WeatherStationGridLiveComponent do
   @moduledoc """
   Container live component displaying a set of WeatherStationLive components in a
-  flowing grid.   Each weather station component is decorated with a dismissal icon;
+  flowing grid.  Each weather station component is decorated with a dismissal icon;
   when clicked a "clear-station" instruction is sent to the parent LiveView to remove
   the station from the working list of stations.
   """
   use WeatherWeb, :live_component
-  import Weather.Util
 
   @impl true
   def handle_event("clear_station", %{"station-id" => station_id}, socket) do
@@ -28,7 +27,7 @@ defmodule WeatherWeb.WeatherStationGridLiveComponent do
     ~H"""
     <div class="flex flex-row flex-wrap mb-4">
       <%= for {station, station_data} <- @stations do %>
-          <div class="w-1/2 p-2 mb-1px mr-1px border border-slate-400">
+          <div class="w-full sm:w-1/2 p-2 mb-1px mr-1px border border-slate-400">
             <div class="flex flex-row">
               <div class="w-full">
                 <.live_component module={WeatherWeb.WeatherStationLiveComponent}

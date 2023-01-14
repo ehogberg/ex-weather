@@ -1,4 +1,9 @@
 defmodule Weather.WeatherServicesSupervisor do
+  @moduledoc """
+  Supervisor organizing the various processes used to run weather station
+  information services.
+  """
+
   use Supervisor
 
   def start_link(args) do

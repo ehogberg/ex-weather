@@ -11,7 +11,6 @@ defmodule WeatherWeb.WeatherLive do
   """
   use WeatherWeb, :live_view
   require Logger
-  import Weather.Util
   alias Weather.WeatherInfoService
   alias Weather.WeatherInfoServiceSupervisor
   alias Weather.WeatherServiceMonitor

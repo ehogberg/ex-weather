@@ -1,4 +1,6 @@
 defmodule WeatherWeb.WeatherStationSummaryLiveComponent do
+  @moduledoc false
+
   use WeatherWeb, :live_component
 
   require Logger
@@ -54,9 +56,7 @@ defmodule WeatherWeb.WeatherStationSummaryLiveComponent do
     IANA timezone specifier
     </a>
     <br/>
-     will
-    display times
-    as relative to the specified timezone.
+     will display time as relative to the specified timezone.
     </p>
     </div>
     """

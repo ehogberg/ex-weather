@@ -87,6 +87,8 @@ defmodule WeatherWeb do
       # Import basic rendering functionality (render, render_layout, etc)
       import Phoenix.View
 
+      import Weather.Util
+
       import WeatherWeb.ErrorHelpers
       import WeatherWeb.Gettext
       alias WeatherWeb.Router.Helpers, as: Routes

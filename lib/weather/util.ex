@@ -1,4 +1,8 @@
 defmodule Weather.Util do
+  @moduledoc """
+  Various useful helper functions.
+  """
+
   def via_tuple(name) do
     normalized_name = name
     |> String.downcase()
