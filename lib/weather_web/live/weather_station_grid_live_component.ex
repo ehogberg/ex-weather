@@ -16,7 +16,7 @@ defmodule WeatherWeb.WeatherStationGridLiveComponent do
   @impl true
   def render(assigns) do
     ~H"""
-    <div>
+    <div id="station-entries" phx-hook="DisconnectHooks">
       <.station_entries id='station_entry_grid'
         stations={@stations} myself={@myself} timezone={@timezone}/>
     </div>
@@ -25,7 +25,8 @@ defmodule WeatherWeb.WeatherStationGridLiveComponent do
 
   def station_entries(assigns) when map_size(assigns.stations) > 0 do
     ~H"""
-    <div class="flex flex-row flex-wrap mb-4">
+    <div id="station-component-grid"
+      class="flex flex-row flex-wrap mb-4" >
       <%= for {station, station_data} <- @stations do %>
           <div class="w-full sm:w-1/2 p-2 mb-1px mr-1px border border-slate-400">
             <div class="flex flex-row">

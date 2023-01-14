@@ -28,7 +28,7 @@ defmodule WeatherWeb.WeatherLive do
   """
   @impl true
   def mount(params, _sess, socket) do
-    stations =
+    user_supplied_stations =
       params
       |> Map.get("stations", "")
       |> parse_stations()
@@ -37,7 +37,8 @@ defmodule WeatherWeb.WeatherLive do
 
     {:ok,
      socket
-     |> assign_default_stations(stations)
+     |> assign(:user_supplied_stations,user_supplied_stations)
+     |> assign(:stations,%{})
      |> assign(:timezone, tz)
     }
   end
@@ -73,6 +74,28 @@ defmodule WeatherWeb.WeatherLive do
        station_id,
        current_conditions
      )}
+  end
+
+  @impl true
+  def handle_event(
+    "load_stations",
+    %{"cached_stations" => cached_stations},
+    socket) do
+
+    Logger.debug("Loading stations. (cached from client: #{cached_stations})")
+
+    # Clear out anything already registered
+    for {current_station_id,_} <- socket.assigns.stations do
+      unwatch_station(current_station_id)
+    end
+
+    stations = if String.length(cached_stations) > 0 do
+      parse_stations(cached_stations)
+    else
+      socket.assigns.user_supplied_stations
+    end
+
+    {:noreply, assign_default_stations(socket,stations)}
   end
 
   defp update_station_current_conditions(socket, station_id, current_conditions)
@@ -160,9 +183,13 @@ defmodule WeatherWeb.WeatherLive do
     if length(Map.keys(socket.assigns.stations)) < 2 do
       socket
     else
-      Phoenix.PubSub.unsubscribe(Weather.PubSub, "station:#{station_id}")
-      WeatherServiceMonitor.remove_station_monitor(station_id, self())
+      unwatch_station(station_id)
       assign(socket, :stations, Map.delete(socket.assigns.stations, station_id))
     end
+  end
+
+  defp unwatch_station(station_id) do
+    Phoenix.PubSub.unsubscribe(Weather.PubSub, "station:#{station_id}")
+    WeatherServiceMonitor.remove_station_monitor(station_id, self())
   end
 end

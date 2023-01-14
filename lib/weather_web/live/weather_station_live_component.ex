@@ -12,7 +12,8 @@ defmodule WeatherWeb.WeatherStationLiveComponent do
   @impl true
   def render(assigns) do
     ~H"""
-      <div class="flex flex-row mb-3">
+      <div class="station-component flex flex-row mb-3"
+       data-stationname={@station_data.name} >
         <.station_component station_data={@station_data} />
       </div>
     """
@@ -20,7 +21,7 @@ defmodule WeatherWeb.WeatherStationLiveComponent do
 
   defp station_component(assigns) when is_map_key(assigns.station_data, :error_message) do
     ~H"""
-      <div class="wiggle">
+      <div>
         <%= @station_data.error_message %>
       </div>
     """
@@ -39,7 +40,7 @@ defmodule WeatherWeb.WeatherStationLiveComponent do
 
   defp conditions_icon(assigns) do
     ~H"""
-    <img src={"http://openweathermap.org/img/wn/#{@icon}.png"}/>
+    <img src={"https://openweathermap.org/img/wn/#{@icon}.png"}/>
     """
   end
 

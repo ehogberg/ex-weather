@@ -1,4 +1,13 @@
 defmodule Weather.WeatherInfoService do
+  @moduledoc """
+  GenServer-based implementation of a weather station query service.
+  Uses Phoenix.PubSub as a communication mechanism; processes interested in
+  updates to a particular weather station's current conditions can subscribe
+  to a topic of update events specific to that station
+
+  In addition, current conditions can be obtained in-band via the
+  station_current_conditions function.
+  """
   use GenServer
 
   alias Weather.WeatherStationInfo
