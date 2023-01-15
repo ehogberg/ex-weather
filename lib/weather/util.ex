@@ -3,12 +3,14 @@ defmodule Weather.Util do
   Various useful helper functions.
   """
 
-  def via_tuple(name) do
-    normalized_name = name
-    |> String.downcase()
-    |> String.replace(~r"[[:blank]]", "")
+  def normalize_weather_info_service_name(name) do
+      name
+      |> String.downcase()
+      |> String.replace(~r"[[:blank]]", "")
+  end
 
-    {:via, Registry, {Weather.WeatherServicesRegistry, normalized_name}}
+  def via_tuple(name) do
+    {:via, Horde.Registry, {Weather.WeatherServicesRegistry, name}}
   end
 
   def tuple_to_string(tuple) when is_tuple(tuple) do
@@ -19,14 +21,13 @@ defmodule Weather.Util do
     ref |> :erlang.ref_to_list() |> List.to_string()
   end
 
-
   def normalize_string(str), do: str |> to_string() |> String.trim()
 
   def friendly_timestamp(ts), do: Calendar.strftime(ts, "%x %X")
 
   def friendly_time(ts), do: Calendar.strftime(ts, "%I:%M %p")
 
-  def to_localtime(ts,local_tz) do
+  def to_localtime(ts, local_tz) do
     utc_datetime = DateTime.from_naive!(ts, "Etc/UTC")
     {:ok, local_datetime} = DateTime.shift_zone(utc_datetime, local_tz)
     local_datetime

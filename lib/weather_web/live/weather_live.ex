@@ -11,9 +11,12 @@ defmodule WeatherWeb.WeatherLive do
   """
   use WeatherWeb, :live_view
   require Logger
-  alias Weather.WeatherInfoService
-  alias Weather.WeatherInfoServiceSupervisor
-  alias Weather.WeatherServiceMonitor
+
+  alias Weather.{
+    WeatherInfoService,
+    WeatherInfoServiceSupervisor,
+    WeatherServiceMonitor
+  }
 
   @doc """
   Initializes the component state by creating a default set of WeatherStationLiveComponent's
@@ -33,14 +36,13 @@ defmodule WeatherWeb.WeatherLive do
       |> Map.get("stations", "")
       |> parse_stations()
 
-    tz = Map.get(params,"tz", "Etc/UTC")
+    tz = Map.get(params, "tz", "Etc/UTC")
 
     {:ok,
      socket
-     |> assign(:user_supplied_stations,user_supplied_stations)
-     |> assign(:stations,%{})
-     |> assign(:timezone, tz)
-    }
+     |> assign(:user_supplied_stations, user_supplied_stations)
+     |> assign(:stations, %{})
+     |> assign(:timezone, tz)}
   end
 
   @impl true
@@ -78,24 +80,25 @@ defmodule WeatherWeb.WeatherLive do
 
   @impl true
   def handle_event(
-    "load_stations",
-    %{"cached_stations" => cached_stations},
-    socket) do
-
+        "load_stations",
+        %{"cached_stations" => cached_stations},
+        socket
+      ) do
     Logger.debug("Loading stations. (cached from client: #{cached_stations})")
 
     # Clear out anything already registered
-    for {current_station_id,_} <- socket.assigns.stations do
+    for {current_station_id, _} <- socket.assigns.stations do
       unwatch_station(current_station_id)
     end
 
-    stations = if String.length(cached_stations) > 0 do
-      parse_stations(cached_stations)
-    else
-      socket.assigns.user_supplied_stations
-    end
+    stations =
+      if String.length(cached_stations) > 0 do
+        parse_stations(cached_stations)
+      else
+        socket.assigns.user_supplied_stations
+      end
 
-    {:noreply, assign_default_stations(socket,stations)}
+    {:noreply, assign_default_stations(socket, stations)}
   end
 
   defp update_station_current_conditions(socket, station_id, current_conditions)
@@ -125,10 +128,13 @@ defmodule WeatherWeb.WeatherLive do
     ~H"""
     <div class="flex-grow text-center text-sm italic">
       Weather data from Open Weather Map:
+    <br>
       <a href='https://openweathermap.org'
         class="hover:text-blue-500">https://openweathermap.org</a>
     <br>
-      Find the sourcecode for this at
+    <br>
+      Find the sourcecode for this at:
+    <br>
       <a href="https://github.com/ehogberg/ex-weather"
         class="hover:text-blue-500">https://github.com/ehogberg/ex-weather</a>
     </div>
@@ -144,23 +150,22 @@ defmodule WeatherWeb.WeatherLive do
     do: assign_default_stations(socket, ["Chicago", "London", "Prague"])
 
   defp assign_default_stations(socket, default_stations) do
+    stations =
+      if connected?(socket) do
+        Enum.reduce(default_stations, %{}, fn station_id, acc ->
+          Map.put(acc, station_id, initialize_new_station(station_id))
+        end)
+      else
+        %{}
+      end
 
-      stations =
-        if connected?(socket) do
-          Enum.reduce(default_stations, %{}, fn station_id, acc ->
-            Map.put(acc, station_id, initialize_new_station(station_id))
-          end)
-        else
-          %{}
-        end
-
-      assign(socket, :stations, stations)
+    assign(socket, :stations, stations)
   end
 
   defp initialize_new_station(station_id) do
     WeatherInfoServiceSupervisor.start_child(station_id)
     current_conditions = WeatherInfoService.station_current_conditions(station_id)
-    WeatherServiceMonitor.add_station_monitor(station_id,self())
+    WeatherServiceMonitor.add_station_monitor(station_id, self())
     Phoenix.PubSub.subscribe(Weather.PubSub, "station:#{station_id}")
     current_conditions
   end

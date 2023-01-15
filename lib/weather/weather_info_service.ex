@@ -15,31 +15,57 @@ defmodule Weather.WeatherInfoService do
   import Weather.Util
   require Logger
 
-    ## Public API
+  ## Public API
 
   def start_link(station_id) do
-    GenServer.start_link(__MODULE__, [station_id], name: via_tuple(station_id))
+    case GenServer.start_link(
+      __MODULE__,
+      [station_id],
+      name: via_weather_info_service_tuple(station_id)) do
+        {:ok, pid} ->
+          Logger.debug("Weather info service instance #{station_id} successfully started.")
+          {:ok, pid}
+
+        {:error, {:already_started, pid}} ->
+          Logger.warn("Weather info service instance #{station_id} already started at pid #{inspect(pid)}.")
+          :ignore
+    end
   end
 
   def service_state(station_id) do
     GenServer.call(
-      via_tuple(station_id),
+      via_weather_info_service_tuple(station_id),
       :service_state
     )
   end
 
   def station_current_conditions(station_id) do
     GenServer.call(
-      via_tuple(station_id),
+      via_weather_info_service_tuple(station_id),
       :current_conditions
     )
   end
 
   def stop(station_id) do
     GenServer.stop(
-      via_tuple(station_id),
+      via_weather_info_service_tuple(station_id),
       {:shutdown, :unused}
     )
+  end
+
+  defp via_weather_info_service_tuple(name) do
+    name
+    |> normalize_weather_info_service_name()
+    |> via_tuple()
+  end
+
+  def child_spec(station_id) do
+    %{
+      id: "#{__MODULE__}_#{station_id}",
+      start: {Weather.WeatherInfoService, :start_link, [station_id]},
+      restart: :transient,
+      timeout: 10_000
+    }
   end
 
   ## Behaviour implementation
@@ -72,7 +98,9 @@ defmodule Weather.WeatherInfoService do
 
   @impl true
   def terminate(reason, state) do
-    Logger.debug("Weather station info service #{state.station_id} shutting down. (#{tuple_to_string(reason)})")
+    Logger.debug(
+      "Weather station info service #{state.station_id} shutting down. (#{tuple_to_string(reason)})"
+    )
   end
 
   defp load_station_and_update_state(%{station_id: station_id} = state) do

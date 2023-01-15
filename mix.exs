@@ -50,6 +50,7 @@ defmodule Weather.MixProject do
       {:tailwind, "~> 0.1", runtime: Mix.env() == :dev},
       {:tzdata, "~> 1.1"},
       {:libcluster, "~> 3.2"},
+      {:horde, "~> 0.8.7"},
     ]
   end
 

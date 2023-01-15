@@ -37,7 +37,7 @@ defmodule WeatherWeb.WeatherStationSummaryLiveComponent do
   end
 
   def list_permalink(assigns) do
-    attrs = assigns_to_attributes(assigns, [:uri, :stations])
+    attrs = assigns_to_attributes(assigns, [:uri, :stations, :tz])
 
     ~H"""
     <a href={"#{@uri}?stations=#{Enum.join(@stations,"|")}&tz=#{@timezone}"} {attrs}>
@@ -52,11 +52,13 @@ defmodule WeatherWeb.WeatherStationSummaryLiveComponent do
     <p class="mb-2">Times displayed as UTC</p>
     <p>
     Setting the <code>tz</code> query string parameter to an
+    <br>
     <a class="hover:text-blue-500" href="https://en.wikipedia.org/wiki/List_of_tz_database_time_zones">
     IANA timezone specifier
     </a>
-    <br/>
-     will display time as relative to the specified timezone.
+     will display time
+     <br>
+     as relative to the specified timezone.
     </p>
     </div>
     """

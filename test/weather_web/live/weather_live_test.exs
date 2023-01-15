@@ -30,14 +30,15 @@ defmodule WeatherWeb.WeatherLiveTests do
 
     test "when no weather stations are provided", %{socket: socket} do
       {:ok, socket} = WeatherLive.mount(%{}, nil, socket)
+
       assert Map.keys(socket.assigns.stations) ==
-        ["Chicago", "London", "Prague"]
+               ["Chicago", "London", "Prague"]
     end
 
     test "when stations are provided", %{socket: socket} do
       params = %{"stations" => "Peoria|Louisville"}
       {:ok, socket} = WeatherLive.mount(params, nil, socket)
-      assert Map.keys(socket.assigns.stations) == ["Louisville","Peoria"]
+      assert Map.keys(socket.assigns.stations) == ["Louisville", "Peoria"]
     end
   end
 
@@ -50,7 +51,7 @@ defmodule WeatherWeb.WeatherLiveTests do
       {:noreply, socket} = WeatherLive.handle_info({:add_station, "Springfield"}, mounted_socket)
 
       assert Map.keys(socket.assigns.stations) ==
-        ["Chicago", "London", "Prague", "Springfield"]
+               ["Chicago", "London", "Prague", "Springfield"]
     end
 
     test "duplicate station addition requests are ignored", %{mounted_socket: mounted_socket} do
