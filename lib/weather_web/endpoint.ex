@@ -23,7 +23,7 @@ defmodule WeatherWeb.Endpoint do
   plug Plug.Static,
     at: "/",
     from: :weather,
-    gzip: false,
+    gzip: Mix.env == :prod,
     only: ~w(assets fonts images favicon.ico robots.txt)
 
   # Code reloading can be explicitly enabled under the

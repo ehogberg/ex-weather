@@ -30,6 +30,7 @@ if config_env() == :prod do
     load_from_system_env: true,
     http: [
       port: {:system, "PORT"},
+      compress: true,
       transport_options: [socket_opts: [:inet6]]],
     secret_key_base: secret_key_base,
     url: [host: System.get_env("APP_NAME") <> ".gigalixirapp.com", port: 443],
