@@ -127,7 +127,7 @@ defmodule WeatherWeb.WeatherLive do
     ~H"""
     <div class="flex flex-col">
       <div class="flex-grow text-center font-bold text-2xl mb-4">
-        Phoenix LiveView Weather
+        LiveView Weather
       </div>
       <.live_component
         module={WeatherWeb.WeatherStationSummaryLiveComponent}
