@@ -36,18 +36,32 @@ defmodule WeatherWeb.WeatherLive do
       |> Map.get("stations", "")
       |> parse_stations()
 
-    tz = Map.get(params, "tz", "Etc/UTC")
+    tz = Map.get(params, "tz")
 
     {:ok,
      socket
-     |> assign(:user_supplied_stations, user_supplied_stations)
      |> assign(:stations, %{})
-     |> assign(:timezone, tz)}
+     |> assign(:user_supplied_stations, user_supplied_stations)
+     |> assign_tz_info(tz)}
   end
 
   @impl true
   def handle_params(_params, uri, socket) do
     {:noreply, assign(socket, :uri, base_uri(uri))}
+  end
+
+  defp assign_tz_info(socket, timezone) when is_nil(timezone) do
+    assign(
+      socket,
+      %{timezone: "Etc/UTC", valid_timezone?: true}
+    )
+  end
+
+  defp assign_tz_info(socket, timezone) do
+    assign(
+      socket,
+      %{timezone: timezone, valid_timezone?: Tzdata.zone_exists?(timezone)}
+    )
   end
 
   defp base_uri(uri) do
@@ -118,7 +132,7 @@ defmodule WeatherWeb.WeatherLive do
       <.live_component
         module={WeatherWeb.WeatherStationSummaryLiveComponent}
         id="live_list" stations={@stations} timezone={@timezone}
-        uri={@uri}/>
+        valid_timezone?={@valid_timezone?} uri={@uri}/>
       <.footer />
     </div>
     """

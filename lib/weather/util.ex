@@ -27,9 +27,14 @@ defmodule Weather.Util do
 
   def friendly_time(ts), do: Calendar.strftime(ts, "%I:%M %p")
 
-  def to_localtime(ts, local_tz) do
+  def to_localtime(ts, local_tz, valid_timezone? \\ true) do
     utc_datetime = DateTime.from_naive!(ts, "Etc/UTC")
-    {:ok, local_datetime} = DateTime.shift_zone(utc_datetime, local_tz)
-    local_datetime
+
+    if valid_timezone? do
+      {:ok, local_datetime} = DateTime.shift_zone(utc_datetime, local_tz)
+      local_datetime
+    else
+      utc_datetime
+    end
   end
 end

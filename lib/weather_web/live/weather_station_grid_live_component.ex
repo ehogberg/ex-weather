@@ -18,7 +18,8 @@ defmodule WeatherWeb.WeatherStationGridLiveComponent do
     ~H"""
     <div id="station-entries" phx-hook="DisconnectHooks">
       <.station_entries id='station_entry_grid'
-        stations={@stations} myself={@myself} timezone={@timezone}/>
+        stations={@stations} myself={@myself} timezone={@timezone}
+        valid_timezone?={@valid_timezone?}/>
     </div>
     """
   end
@@ -28,11 +29,13 @@ defmodule WeatherWeb.WeatherStationGridLiveComponent do
     <div id="station-component-grid"
       class="flex flex-row flex-wrap mb-4" >
       <%= for {station, station_data} <- @stations do %>
-          <div class="w-full sm:w-1/2 p-2 mb-1px mr-1px border border-slate-400">
+          <div class="w-full sm:w-1/2 p-2 mb-1px mr-1px border border-slate-400"
+            phx-mounted={Phoenix.LiveView.JS.show(transition: "fade-in-scale", time: 4000)}>
             <div class="flex flex-row">
               <div class="w-full">
                 <.live_component module={WeatherWeb.WeatherStationLiveComponent}
-                  id={station} station_data={station_data} />
+                  id={station} station_data={station_data}
+                  valid_timezone?={@valid_timezone?}/>
               </div>
 
               <i phx-click="clear_station" phx-target={@myself}
@@ -43,7 +46,7 @@ defmodule WeatherWeb.WeatherStationGridLiveComponent do
               <div class="italic text-sm text-center">
                 Last checked at:
                 <%= station_data.weather_checked_at
-                |> to_localtime(@timezone)
+                |> to_localtime(@timezone,@valid_timezone?)
                 |> friendly_time()
                 %>
               </div>

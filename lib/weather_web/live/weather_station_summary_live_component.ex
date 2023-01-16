@@ -15,7 +15,8 @@ defmodule WeatherWeb.WeatherStationSummaryLiveComponent do
 
       <.live_component
         module={WeatherWeb.WeatherStationGridLiveComponent}
-        id="summary" stations={@stations} timezone={@timezone}/>
+        id="summary" stations={@stations} timezone={@timezone}
+        valid_timezone?={@valid_timezone?}/>
 
       <div class="flex-grow text-center mb-4">
         <.list_permalink stations={Map.keys(@stations)} uri={@uri}
@@ -23,7 +24,7 @@ defmodule WeatherWeb.WeatherStationSummaryLiveComponent do
       </div>
 
       <div class="text-center text-sm mb-4">
-        <.time_display_info timezone={@timezone} />
+        <.time_display_info timezone={@timezone} valid_timezone?={@valid_timezone?}/>
       </div>
     </div>
     """
@@ -43,6 +44,18 @@ defmodule WeatherWeb.WeatherStationSummaryLiveComponent do
     <a href={"#{@uri}?stations=#{Enum.join(@stations,"|")}&tz=#{@timezone}"} {attrs}>
       <%= render_slot(@inner_block) %>
     </a>
+    """
+  end
+
+  def time_display_info(assigns) when assigns.valid_timezone? == false do
+    ~H"""
+    <div>
+    <p class="mb-2">You specified timezone <strong><%= @timezone %></strong>
+    but IANA doesn't know that one.</p>
+    <p>
+    Displaying times as UTC.
+    </p>
+    </div>
     """
   end
 
