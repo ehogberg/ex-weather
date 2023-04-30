@@ -82,7 +82,13 @@ defmodule Weather.WeatherInfoService do
 
   @impl true
   def handle_call(:service_state, _, state) do
-    {:reply, state, state}
+    {:reply,
+      %{state: state,
+        pid: self(),
+        node: Node.self()
+      },
+      state
+    }
   end
 
   @impl true

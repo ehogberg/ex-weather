@@ -2,6 +2,7 @@ defmodule WeatherWeb.WeatherStationLiveComponent do
   @moduledoc false
 
   use WeatherWeb, :live_component
+  alias Phoenix.LiveView.JS
   require Logger
 
   @impl true
@@ -12,9 +13,13 @@ defmodule WeatherWeb.WeatherStationLiveComponent do
   @impl true
   def render(assigns) do
     ~H"""
-      <div class="station-component flex flex-row mb-3"
-       data-stationname={@station_data.name} >
-        <.station_component station_data={@station_data} />
+      <div
+      class="station-component flex flex-row mb-3 transition-opacity ease-in duration-500 opacity-0"
+      data-stationname={@station_data.name}
+      phx-mounted={JS.add_class("opacity-100") |> JS.remove_class("opacity-0")}
+      >
+        <.station_component station_data={@station_data}
+        class="" />
       </div>
     """
   end

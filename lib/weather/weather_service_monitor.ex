@@ -28,6 +28,7 @@ defmodule Weather.WeatherServiceMonitor do
     end
   end
 
+  @spec add_station_monitor(binary, pid) :: :ok
   def add_station_monitor(station_id, pid)
       when is_pid(pid) and is_binary(station_id) do
     GenServer.cast(via_tuple(__MODULE__), {:add_station_monitor, station_id, pid})
