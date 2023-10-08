@@ -11,7 +11,7 @@ defmodule Weather.WeatherInfoService do
   use GenServer
 
   alias Weather.WeatherStationInfo
-  alias Phoenix.PubSub
+  alias WeatherWeb.Endpoint
   import Weather.Util
   require Logger
 
@@ -93,7 +93,11 @@ defmodule Weather.WeatherInfoService do
 
   @impl true
   def handle_call(:current_conditions, _, state) do
-    {:reply, get_in(state, [:history, Access.at(0)]), state}
+    current_conditions = get_in(state, [:history, Access.at(0)])
+
+    IO.inspect(current_conditions)
+
+    {:reply, current_conditions, state}
   end
 
   @impl true
@@ -112,10 +116,10 @@ defmodule Weather.WeatherInfoService do
   defp load_station_and_update_state(%{station_id: station_id} = state) do
     current_info = WeatherStationInfo.get_weather_station_info(station_id)
 
-    PubSub.broadcast(
-      Weather.PubSub,
-      "station:#{station_id}",
-      {:station_info_updated, station_id, current_info}
+    Endpoint.broadcast(
+      "station_updates",
+      "station_info_updated",
+      %{station_id: station_id}
     )
 
     update_in(state, [:history], &[current_info | Enum.take(&1, 99)])

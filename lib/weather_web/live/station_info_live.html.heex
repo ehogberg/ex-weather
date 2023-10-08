@@ -1,0 +1,12 @@
+<div class="flex flex-row">
+    <%= if is_map_key(@station_data, :error_message) do %>
+        <.station_info_error error_msg={@station_data[:error_message]} />
+    <% else %>
+        <.station_info station_data={@station_data}
+            tz={@tz} valid_tz?={@valid_tz?}/>
+    <% end %>
+
+    <i  phx-click="clear_station"
+        phx-value-station-id={@station_id}
+        class="cursor-pointer fas fa-duotone fa-xmark float-right"></i>
+</div>

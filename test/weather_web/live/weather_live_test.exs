@@ -32,7 +32,7 @@ defmodule WeatherWeb.WeatherLiveTests do
       {:ok, socket} = WeatherLive.mount(%{}, nil, socket)
 
       assert Map.keys(socket.assigns.stations) ==
-               ["Chicago", "London", "Prague"]
+               ["Chicago", "New York"]
     end
 
     test "when stations are provided", %{socket: socket} do

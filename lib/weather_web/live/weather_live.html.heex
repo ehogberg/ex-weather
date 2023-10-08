@@ -1,0 +1,60 @@
+<div class="flex flex-col">
+    <div class="flex-grow text-center font-bold text-2xl mb-4">
+        LiveView Weather
+    </div>
+
+    <div class="flex flex-row mb-4">
+      <span class="w-3/12">Enter a station to add:</span>
+      <span class="w-9/12">
+        <form id="add_station_form" name="add_station" phx-submit="add_station">
+          <%= text_input :station, :station_id, value: "",
+            autocomplete: "off",
+            class: "rounded w-full placeholder:italic placeholder:text-slate-400",
+            placeholder: "Examples: \"New York\", \"Paris, FR\"" %>
+        </form>
+      </span>
+      <span class="ml-3">
+        <button class="border" type="submit" form="add_station_form">
+          <i class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded far fa-solid fa-plus-large"></i>
+        </button>
+      </span>
+    </div>
+
+    <div id="station-component-grid" phx-update="stream"
+        class="flex flex-row flex-wrap mb-4" >
+        <%= for {dom_id, weather_station} <- @streams.weather_stations do %>
+            <div id={dom_id} class="w-full sm:w-1/2 p-2 mb-1px mr-1px border border-slate-400">
+                <.live_component
+                    module={WeatherWeb.StationInfoLive}
+                    id={weather_station}
+                    tz={@tz}
+                    valid_tz?={@valid_tz?}/>
+            </div>
+        <% end %>
+    </div>
+
+    <div class="text-center">
+      <a href={"#{@uri}?stations=#{Enum.join(@full_station_list, "|")}&tz=#{@tz}"} class="hover:text-blue-500">
+        [Permalink to the above stations]
+      </a>
+    </div>
+
+    <div class="flex-grow text-center text-sm mt-4">
+      <div class="text-center text-sm mb-4">
+        <.time_display_info timezone={@tz} valid_timezone?={@valid_tz?}/>
+      </div>
+
+      <div class="italic">
+          Weather data from Open Weather Map:
+        <br>
+          <a href='https://openweathermap.org'
+            class="hover:text-blue-500">https://openweathermap.org</a>
+        <br>
+        <br>
+          Find the sourcecode for this at:
+        <br>
+          <a href="https://github.com/ehogberg/ex-weather"
+            class="hover:text-blue-500">https://github.com/ehogberg/ex-weather</a>
+      </div>
+    </div>
+</div>

@@ -17,13 +17,17 @@ defmodule WeatherWeb do
   and import those modules here.
   """
 
+  def static_paths, do: ~w(assets fonts images favicon.ico robots.txt)
+
   def controller do
     quote do
       use Phoenix.Controller, namespace: WeatherWeb
 
       import Plug.Conn
       import WeatherWeb.Gettext
-      alias WeatherWeb.Router.Helpers, as: Routes
+      #alias WeatherWeb.Router.Helpers, as: Routes
+      unquote(verified_routes())
+
     end
   end
 
@@ -89,12 +93,24 @@ defmodule WeatherWeb do
 
       import Weather.Util
 
+      import WeatherWeb.CoreComponents
+
       import WeatherWeb.ErrorHelpers
       import WeatherWeb.Gettext
       alias WeatherWeb.Router.Helpers, as: Routes
+
+      unquote(verified_routes())
     end
   end
 
+  def verified_routes do
+    quote do
+      use Phoenix.VerifiedRoutes,
+        endpoint: WeatherWeb.Endpoint,
+        router: WeatherWeb.Router,
+        statics: WeatherWeb.static_paths()
+    end
+  end
   @doc """
   When used, dispatch to the appropriate controller/view/etc.
   """

@@ -6,6 +6,12 @@ defmodule Weather.WeatherStationInfo do
 
   require Logger
 
+  defstruct [
+    :name, :icon, :conditions, :curr_temp,
+    :feels_like, :temp_max, :temp_min,
+    :humidity, :weather_updated_at, :weather_checked_at
+  ]
+
   def format_weather_info_url(station) do
     "https://api.openweathermap.org/data/2.5/weather?" <>
       "appid=#{Application.fetch_env!(:weather, :weather_service_api_key)}" <>
@@ -49,7 +55,7 @@ defmodule Weather.WeatherStationInfo do
   defp normalize_station_data(raw_station_data) do
     current_conditions = List.first(raw_station_data.weather)
 
-    %{
+    %__MODULE__{
       name: raw_station_data.name,
       icon: current_conditions.icon,
       conditions: current_conditions.description,
@@ -58,7 +64,8 @@ defmodule Weather.WeatherStationInfo do
       temp_max: trunc(raw_station_data.main.temp_max),
       temp_min: trunc(raw_station_data.main.temp_min),
       humidity: trunc(raw_station_data.main.humidity),
-      weather_updated_at: DateTime.from_unix!(raw_station_data.dt)
+      weather_updated_at: DateTime.from_unix!(raw_station_data.dt),
+      weather_checked_at: DateTime.utc_now()
     }
   end
 end

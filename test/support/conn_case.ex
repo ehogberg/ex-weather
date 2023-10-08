@@ -25,6 +25,7 @@ defmodule WeatherWeb.ConnCase do
       import WeatherWeb.ConnCase
 
       alias WeatherWeb.Router.Helpers, as: Routes
+      unquote(WeatherWeb.verified_routes())
 
       # The default endpoint for testing
       @endpoint WeatherWeb.Endpoint

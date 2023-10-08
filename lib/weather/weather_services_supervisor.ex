@@ -14,7 +14,6 @@ defmodule Weather.WeatherServicesSupervisor do
   def init(_args) do
     children = [
       {Horde.Registry, keys: :unique, name: Weather.WeatherServicesRegistry, members: :auto},
-      Weather.WeatherServiceMonitor,
       Weather.WeatherInfoServiceSupervisor
     ]
 

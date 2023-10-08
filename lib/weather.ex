@@ -1,9 +1,13 @@
 defmodule Weather do
-  @moduledoc """
-  Weather keeps the contexts that define your domain
-  and business logic.
 
-  Contexts are also responsible for managing your data, regardless
-  if it comes from the database, an external API or others.
-  """
+  alias Weather.WeatherInfoServiceSupervisor
+  alias Weather.WeatherInfoService
+
+  def start_weather_station_info(station_id) do
+    WeatherInfoServiceSupervisor.start_child(station_id)
+  end
+
+  def get_current_station_info(station_id) do
+    WeatherInfoService.station_current_conditions(station_id)
+  end
 end

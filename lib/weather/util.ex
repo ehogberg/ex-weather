@@ -21,18 +21,13 @@ defmodule Weather.Util do
     ref |> :erlang.ref_to_list() |> List.to_string()
   end
 
-  def normalize_string(str), do: str |> to_string() |> String.trim()
-
-  def friendly_timestamp(ts), do: Calendar.strftime(ts, "%x %X")
-
   def friendly_time(ts), do: Calendar.strftime(ts, "%I:%M %p")
 
   def to_localtime(ts, local_tz, valid_timezone? \\ true) do
     utc_datetime = DateTime.from_naive!(ts, "Etc/UTC")
 
     if valid_timezone? do
-      {:ok, local_datetime} = DateTime.shift_zone(utc_datetime, local_tz)
-      local_datetime
+      DateTime.shift_zone!(utc_datetime, local_tz)
     else
       utc_datetime
     end
