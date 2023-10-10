@@ -33,7 +33,6 @@ defmodule Weather.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      #{:distillery, "~> 2.1"},
       {:bcrypt_elixir, "~> 3.0"},
       {:ecto_sql, "~> 3.6"},
       {:esbuild, "~> 0.7", runtime: Mix.env() == :dev},
