@@ -18,7 +18,7 @@ config :weather, WeatherWeb.Endpoint,
   secret_key_base: "RYhUJxL1AxgNlkeBNmzu3r+SIDAC2yQ8R5iIq3lzIJNNv/VJTayCLS6PWm9A/+Lj",
   render_errors: [view: WeatherWeb.ErrorView, accepts: ~w(html json), layout: false],
   pubsub_server: Weather.PubSub,
-  live_view: [signing_salt: "V8kFu9GX"],
+  live_view: [signing_salt: "V8kFu9GX"]
 
 # Configures Elixir's Logger
 config :logger, :console,
