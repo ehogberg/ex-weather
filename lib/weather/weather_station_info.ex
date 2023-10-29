@@ -41,11 +41,11 @@ defmodule Weather.WeatherStationInfo do
         station_data
       else
         %{status_code: 404} ->
-          Logger.warn("No such station: #{station}.")
+          Logger.warning("No such station: #{station}.")
           %{error_message: "Could not find weather station: #{station}."}
 
         error ->
-          Logger.warn("Error while retrieving data for station #{station}: #{inspect(error)}")
+          Logger.warning("Error while retrieving data for station #{station}: #{inspect(error)}")
           %{error_message: "Something went wrong retrieving station #{station}!"}
       end
 

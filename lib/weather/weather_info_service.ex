@@ -1,3 +1,4 @@
+
 defmodule Weather.WeatherInfoService do
   @moduledoc """
   GenServer-based implementation of a weather station query service.
@@ -27,7 +28,7 @@ defmodule Weather.WeatherInfoService do
           {:ok, pid}
 
         {:error, {:already_started, pid}} ->
-          Logger.warn("Weather info service instance #{station_id} already started at pid #{inspect(pid)}.")
+          Logger.warning("Weather info service instance #{station_id} already started at pid #{inspect(pid)}.")
           :ignore
     end
   end

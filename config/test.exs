@@ -1,3 +1,4 @@
+
 import Config
 
 # We don't run a server during test. If one is required,
@@ -7,4 +8,4 @@ config :weather, WeatherWeb.Endpoint,
   server: false
 
 # Print only warnings and errors during test
-config :logger, level: :warn
+config :logger, level: :warning

@@ -4,8 +4,10 @@ defmodule Weather.WeatherInfoServiceSupervisor do
   a start_child helper useful for adding a new station service.
   """
   use Horde.DynamicSupervisor
+  require Logger
 
   def start_link(args) do
+    Logger.debug("Starting weather info services supervisor.")
     Horde.DynamicSupervisor.start_link(__MODULE__, args, name: __MODULE__)
   end
 

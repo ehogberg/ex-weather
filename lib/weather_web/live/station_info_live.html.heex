@@ -1,4 +1,4 @@
-<div class="flex flex-row">
+<div class="flex flex-row" name={"station_info_#{@station_id}"}>
     <%= if is_map_key(@station_data, :error_message) do %>
         <.station_info_error error_msg={@station_data[:error_message]} />
     <% else %>

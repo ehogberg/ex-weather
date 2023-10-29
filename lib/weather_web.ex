@@ -49,7 +49,7 @@ defmodule WeatherWeb do
   def live_view do
     quote do
       use Phoenix.LiveView,
-        layout: {WeatherWeb.LayoutView, "live.html"}
+        layout: {WeatherWeb.LayoutView, :live}
 
       unquote(view_helpers())
     end
