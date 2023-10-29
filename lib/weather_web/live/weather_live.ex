@@ -83,8 +83,7 @@ defmodule WeatherWeb.WeatherLive do
   end
 
   @impl true
-  def handle_event(evt, params, socket) do
-    IO.inspect( %{evt: evt, params: params})
+  def handle_event(_evt, _params, socket) do
     {:noreply, socket}
   end
 

@@ -96,8 +96,6 @@ defmodule Weather.WeatherInfoService do
   def handle_call(:current_conditions, _, state) do
     current_conditions = get_in(state, [:history, Access.at(0)])
 
-    IO.inspect(current_conditions)
-
     {:reply, current_conditions, state}
   end
 
