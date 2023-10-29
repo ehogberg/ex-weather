@@ -19,7 +19,6 @@ config :weather, WeatherWeb.Endpoint,
   render_errors: [view: WeatherWeb.ErrorView, accepts: ~w(html json), layout: false],
   pubsub_server: Weather.PubSub,
   live_view: [signing_salt: "V8kFu9GX"],
-  check_origin: ["//ex-weather.erichogberg.com"]
 
 # Configures Elixir's Logger
 config :logger, :console,
