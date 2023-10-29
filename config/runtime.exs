@@ -46,11 +46,11 @@ end
 
 weather_service_api_key =
   System.get_env("WEATHER_SERVICE_API_KEY") ||
-  raise """
-  Environment variable WEATHER_SERVICE_API_KEY is missing.
+    raise """
+    Environment variable WEATHER_SERVICE_API_KEY is missing.
 
-  To fetch weather data from Open Weathermap, you'll need an API key.  A free account can be
-  set up at https://home.openweathermap.org/users/sign_up.  Once set up, visit
-  https://home.openweathermap.org/api_keys to generate an API key.
-  """
+    To fetch weather data from Open Weathermap, you'll need an API key.  A free account can be
+    set up at https://home.openweathermap.org/users/sign_up.  Once set up, visit
+    https://home.openweathermap.org/api_keys to generate an API key.
+    """
 config :weather, weather_service_api_key: weather_service_api_key

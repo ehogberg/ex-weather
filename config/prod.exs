@@ -13,6 +13,12 @@ config :libcluster,
     ]
   ]
 
+  config :weather, WeatherWeb.Endpoint,
+    check_origin: [
+      "//ex-weather.erichogberg.com",
+      "//ex-weather.gigalixir.app.com"
+    ]
+
 # ## SSL Support
 #
 # To get SSL working, you will need to add the `https` key
