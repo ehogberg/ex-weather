@@ -16,7 +16,7 @@ config :libcluster,
   config :weather, WeatherWeb.Endpoint,
     check_origin: [
       "//ex-weather.erichogberg.com",
-      "//ex-weather.gigalixir.app.com"
+      "//ex-weather.gigalixirapp.com"
     ]
 
 # ## SSL Support
